@@ -1,0 +1,22 @@
+[
+  {
+    "chunk_id": "d8d0a64a-13c6-4f3e-8229-3fac29842076",
+    "doc_id": "021d9086-3ed3-4f4c-a223-624d80d56d1c",
+    "content": "This guide explains how JWT tokens work.",
+    "source_url": null,
+    "section_title": "Overview",
+    "char_count": 40,
+    "token_count": 7,
+    "metadata": {}
+  },
+  {
+    "chunk_id": "04e9769d-9fb8-4c6a-aea0-627152c005fd",
+    "doc_id": "021d9086-3ed3-4f4c-a223-624d80d56d1c",
+    "content": "Tokens expire after 60 minutes. Use the refresh endpoint to obtain a new token.\n\n`python\ndef refresh():\n    return 'new_token'\n``n",
+    "source_url": null,
+    "section_title": "Token Refresh",
+    "char_count": 130,
+    "token_count": 20,
+    "metadata": {}
+  }
+]
