@@ -5,10 +5,16 @@ Dense vector embedding encoder using SentenceTransformers with all-MiniLM-L6-v2.
 
 from __future__ import annotations
 
-from typing import List, Union
+from typing import TYPE_CHECKING, List, Union
 
 import numpy as np
-from sentence_transformers import SentenceTransformer
+try:
+    from sentence_transformers import SentenceTransformer
+except ImportError:  # Allows the rest of the package to be inspected without ML extras.
+    SentenceTransformer = None  # type: ignore[assignment,misc]
+
+if TYPE_CHECKING:
+    from sentence_transformers import SentenceTransformer as SentenceTransformerType
 
 
 class MiniLMEncoder:
@@ -29,12 +35,17 @@ class MiniLMEncoder:
     ) -> None:
         self.model_name = model_name
         self.device = device
-        self._model: SentenceTransformer | None = None
+        self._model: "SentenceTransformerType | None" = None
 
     @property
-    def model(self) -> SentenceTransformer:
+    def model(self) -> "SentenceTransformerType":
         """Lazy loader for SentenceTransformer model."""
         if self._model is None:
+            if SentenceTransformer is None:
+                raise ImportError(
+                    "Sentence Transformers is required for MiniLM embeddings. "
+                    "Install project dependencies with `pip install -r requirements.txt`."
+                )
             self._model = SentenceTransformer(self.model_name, device=self.device)
         return self._model
 

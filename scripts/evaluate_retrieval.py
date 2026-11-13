@@ -23,9 +23,7 @@ src_dir = root_dir / "src"
 if str(src_dir) not in sys.path:
     sys.path.insert(0, str(src_dir))
 
-from docurag.retrieval.bm25_search import BM25Retriever
 from docurag.retrieval.dense_search import DenseRetriever
-from docurag.retrieval.hybrid_search import HybridRetriever
 from docurag.retrieval.result import SearchResult
 
 # Test Query Benchmark Definition
@@ -334,6 +332,11 @@ def generate_markdown_report(
 
 
 def main() -> None:
+    # Keep the benchmark definitions importable by dense-only evaluation without
+    # requiring the optional rank-bm25 dependency.
+    from docurag.retrieval.bm25_search import BM25Retriever
+    from docurag.retrieval.hybrid_search import HybridRetriever
+
     chunks_path = root_dir / "data" / "processed" / "chunks.json"
     if not chunks_path.exists():
         print(f"Error: {chunks_path} not found. Run 'python -m data_pipeline.run_pipeline' first.")

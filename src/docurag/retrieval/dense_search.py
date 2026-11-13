@@ -13,6 +13,7 @@ import numpy as np
 
 from ..embeddings.encoder import MiniLMEncoder
 from .result import SearchResult
+from .vector_index import FaissVectorIndex
 
 
 class DenseRetriever:
@@ -37,6 +38,7 @@ class DenseRetriever:
         self.encoder = encoder or MiniLMEncoder(model_name=model_name)
         self.chunks: List[Dict[str, Any]] = []
         self.embeddings: Optional[np.ndarray] = None
+        self.vector_index = FaissVectorIndex()
 
         if chunks:
             self.index(chunks)
@@ -69,6 +71,34 @@ class DenseRetriever:
             self.embeddings = self.encoder.encode(texts, normalize_embeddings=True)
         else:
             self.embeddings = np.empty((0, self.encoder.embedding_dim), dtype=np.float32)
+        self.vector_index.build(self.embeddings)
+
+    def save_index(self, directory: Union[str, pathlib.Path]) -> None:
+        """Persist chunk records plus their FAISS/NumPy vector index."""
+        path = pathlib.Path(directory)
+        path.mkdir(parents=True, exist_ok=True)
+        (path / "chunks.json").write_text(json.dumps(self.chunks, ensure_ascii=False, indent=2), encoding="utf-8")
+        self.vector_index.save(path)
+
+    @classmethod
+    def load_index(
+        cls,
+        directory: Union[str, pathlib.Path],
+        encoder: Optional[MiniLMEncoder] = None,
+        model_name: str = "all-MiniLM-L6-v2",
+    ) -> "DenseRetriever":
+        """Load a previously built index without re-embedding document chunks."""
+        path = pathlib.Path(directory)
+        chunks_path = path / "chunks.json"
+        if not chunks_path.exists():
+            raise FileNotFoundError(f"Chunk data not found: {chunks_path}")
+        instance = cls(encoder=encoder, model_name=model_name)
+        instance.chunks = json.loads(chunks_path.read_text(encoding="utf-8"))
+        instance.vector_index = FaissVectorIndex.load(path)
+        instance.embeddings = instance.vector_index.embeddings
+        if len(instance.chunks) != len(instance.embeddings):
+            raise ValueError("Saved chunks and vectors have different lengths")
+        return instance
 
     @classmethod
     def from_json(
@@ -98,18 +128,18 @@ class DenseRetriever:
         List[SearchResult]
             Ranked list of results with dense similarity scores.
         """
-        if self.embeddings is None or len(self.chunks) == 0:
+        if top_k < 0:
+            raise ValueError("top_k cannot be negative")
+        if top_k == 0 or self.embeddings is None or len(self.chunks) == 0:
             return []
 
         query_vector = self.encoder.encode(query, normalize_embeddings=True)
-        # Cosine similarity via dot product of normalized embeddings
-        similarities = np.dot(self.embeddings, query_vector.T).flatten()
-
-        ranked_indices = np.argsort(similarities)[::-1]
+        scores, indices = self.vector_index.search(query_vector, top_k=top_k)
 
         results: List[SearchResult] = []
-        for rank_idx, idx in enumerate(ranked_indices[:top_k]):
-            score = float(similarities[idx])
+        for rank_idx, (idx, score) in enumerate(zip(indices[0], scores[0])):
+            idx = int(idx)
+            score = float(score)
             chunk_data = self.chunks[idx]
             metadata = {
                 "doc_id": chunk_data.get("doc_id"),
@@ -118,6 +148,7 @@ class DenseRetriever:
                 "char_count": chunk_data.get("char_count"),
                 "token_count": chunk_data.get("token_count"),
                 "retriever": "dense",
+                "vector_backend": self.vector_index.backend,
                 "dense_score": score,
                 "dense_rank": rank_idx + 1,
                 **(chunk_data.get("metadata") or {}),
