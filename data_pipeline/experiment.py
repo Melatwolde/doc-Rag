@@ -17,8 +17,9 @@ CLI entry point without pulling in heavy optional dependencies.
 
 from __future__ import annotations
 
-from collections import defaultdict
-from typing import List, Tuple
+import json
+from pathlib import Path
+from typing import Any, List, Tuple
 
 from .chunker import chunk_document
 from .models import Document, Chunk
@@ -33,30 +34,36 @@ def _stats(chunks: List[Chunk]) -> Tuple[int, float, int]:
     return len(chunks), total / len(chunks), max(counts)
 
 
-def benchmark(documents: List[Document],
+def benchmark_records(documents: List[Document],
               token_limits: List[int] = [256, 512, 1024],
-              overlap_ratios: List[float] = [0.0, 0.1, 0.2]) -> None:
-    """Run the benchmark and print a markdown table.
-
-    Parameters
-    ----------
-    documents:
-        List of :class:`Document` objects to process.
-    token_limits:
-        Target token limits to test.
-    overlap_ratios:
-        Overlap ratios (e.g. 0.1 = 10 %).
-    """
-    # Header for markdown table
-    print("| Token Limit | Overlap | Chunk Count | Avg Tokens | Max Tokens |")
-    print("|------------|---------|------------|------------|------------|")
+              overlap_ratios: List[float] = [0.0, 0.1, 0.2]) -> List[dict[str, Any]]:
+    """Run the benchmark and return reproducible chunking statistics."""
+    records = []
     for limit in token_limits:
         for overlap in overlap_ratios:
             all_chunks: List[Chunk] = []
             for doc in documents:
                 all_chunks.extend(chunk_document(doc, token_limit=limit, overlap_ratio=overlap))
             count, avg, max_tok = _stats(all_chunks)
-            print(f"| {limit:<11} | {overlap:<7.2f} | {count:<10} | {avg:<10.2f} | {max_tok:<10} |")
+            records.append({"token_limit": limit, "overlap_ratio": overlap, "chunk_count": count, "average_tokens": round(avg, 2), "max_tokens": max_tok})
+    return records
+
+
+def benchmark(documents: List[Document], token_limits: List[int] = [256, 512, 1024], overlap_ratios: List[float] = [0.0, 0.1, 0.2]) -> List[dict[str, Any]]:
+    """Print and return chunking experiment records."""
+    # Header for markdown table
+    print("| Token Limit | Overlap | Chunk Count | Avg Tokens | Max Tokens |")
+    print("|------------|---------|------------|------------|------------|")
+    records = benchmark_records(documents, token_limits, overlap_ratios)
+    for record in records:
+        print(f"| {record['token_limit']:<11} | {record['overlap_ratio']:<7.2f} | {record['chunk_count']:<10} | {record['average_tokens']:<10.2f} | {record['max_tokens']:<10} |")
+    return records
+
+
+def save_experiment(records: List[dict[str, Any]], output_path: Path) -> None:
+    """Persist machine-readable experiment results; never overwrite source docs."""
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_text(json.dumps(records, indent=2) + "\n", encoding="utf-8")
 
 
 if __name__ == "__main__":

@@ -5,7 +5,7 @@ Structure‑aware chunker for markdown documents.
 
 import re
 import uuid
-from typing import List, Tuple
+from typing import Any, Dict, List, Tuple
 
 from .models import Document, Chunk
 from .cleaner import clean_text
@@ -27,6 +27,9 @@ def _split_section_into_chunks(
     content: str,
     token_limit: int,
     overlap_ratio: float,
+    source_url: str | None = None,
+    document_metadata: Dict[str, Any] | None = None,
+    line_start: int = 1,
 ) -> List[Chunk]:
     """Split a single markdown section into chunks.
 
@@ -43,8 +46,10 @@ def _split_section_into_chunks(
     # Tokens that will be carried over to the next chunk for overlap
     overlap_tokens: List[str] = []
 
-    def flush_buffer():
-        nonlocal buffer, current_token, overlap_tokens
+    chunk_start_line = line_start
+
+    def flush_buffer(end_line: int):
+        nonlocal buffer, current_token, overlap_tokens, chunk_start_line
         if not buffer:
             return
         chunk_text = "\n".join(buffer).strip()
@@ -57,11 +62,16 @@ def _split_section_into_chunks(
             chunk_id=chunk_id,
             doc_id=doc_id,
             content=chunk_text,
-            source_url=None,
+            source_url=source_url,
             section_title=section_title or None,
             char_count=len(chunk_text),
             token_count=_token_count(chunk_text),
-            metadata={},
+            metadata={
+                **(document_metadata or {}),
+                "heading_path": section_title or None,
+                "line_start": chunk_start_line,
+                "line_end": end_line,
+            },
         )
         chunks.append(chunk)
         # Prepare overlap buffer
@@ -75,22 +85,24 @@ def _split_section_into_chunks(
         # Reset for next chunk (start with any overlap tokens)
         buffer = overlap_tokens.copy()
         current_token = len(overlap_tokens)
+        chunk_start_line = end_line + 1
 
-    for line in lines:
+    for line_offset, line in enumerate(lines):
         stripped = line.strip()
-        # Detect start/end of fenced code blocks – they are never split
-        if CODE_FENCE_REGEX.match(stripped):
-            in_code_block = not in_code_block
+        is_fence = bool(CODE_FENCE_REGEX.match(stripped))
         # Token count for the line (rough)
         line_tokens = _token_count(line)
         # If adding this line would exceed the limit, flush first (unless we are
-        # inside a code block – we keep the whole block together).
-        if not in_code_block and current_token + line_tokens > token_limit and buffer:
-            flush_buffer()
+        # inside a code block – including its opening and closing fence – we keep
+        # the whole block together).
+        if not in_code_block and not is_fence and current_token + line_tokens > token_limit and buffer:
+            flush_buffer(line_start + line_offset - 1)
         buffer.append(line)
         current_token += line_tokens
+        if is_fence:
+            in_code_block = not in_code_block
     # Flush any remaining text
-    flush_buffer()
+    flush_buffer(line_start + len(lines) - 1)
     return chunks
 
 
@@ -110,12 +122,14 @@ def chunk_document(
     """
     cleaned = clean_text(doc.content)
     lines = cleaned.split("\n")
-    sections: List[Tuple[str, List[str]]] = []  # (title, lines)
+    sections: List[Tuple[str, List[str], int]] = []  # (heading path, lines, first line)
+    heading_stack: List[Tuple[int, str]] = []
     current_title: str = ""
     current_lines: List[str] = []
+    section_start_line = 1
     in_code_block = False
 
-    for line in lines:
+    for line_number, line in enumerate(lines, start=1):
         # Track code fences so that a header inside a code block is ignored.
         if CODE_FENCE_REGEX.match(line.strip()):
             in_code_block = not in_code_block
@@ -124,27 +138,41 @@ def chunk_document(
             if header_match:
                 # Save previous section
                 if current_lines:
-                    sections.append((current_title, current_lines))
+                    sections.append((current_title, current_lines, section_start_line))
                 # Start new section
-                current_title = header_match.group(2).strip()
+                level = len(header_match.group(1))
+                heading = header_match.group(2).strip()
+                while heading_stack and heading_stack[-1][0] >= level:
+                    heading_stack.pop()
+                heading_stack.append((level, heading))
+                current_title = " > ".join(item[1] for item in heading_stack)
                 current_lines = []
+                section_start_line = line_number + 1
                 continue
         # Accumulate line for the current section
         current_lines.append(line)
     # Append final section
     if current_lines:
-        sections.append((current_title, current_lines))
+        sections.append((current_title, current_lines, section_start_line))
 
     # Chunk each section
     all_chunks: List[Chunk] = []
-    for title, sec_lines in sections:
+    section_urls = doc.metadata.get("section_urls", {})
+    for title, sec_lines, first_line in sections:
         sec_text = "\n".join(sec_lines)
+        source_url = section_urls.get(title) or section_urls.get(title.split(" > ")[-1]) or doc.source_url
         sec_chunks = _split_section_into_chunks(
             doc_id=doc.doc_id,
             section_title=title,
             content=sec_text,
             token_limit=token_limit,
             overlap_ratio=overlap_ratio,
+            source_url=source_url,
+            document_metadata={
+                "source_file": doc.metadata.get("source_file", doc.file_name),
+                "publisher": doc.metadata.get("publisher"),
+            },
+            line_start=first_line,
         )
         all_chunks.extend(sec_chunks)
     return all_chunks
