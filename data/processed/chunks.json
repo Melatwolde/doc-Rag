@@ -1,7 +1,77 @@
 [
   {
-    "chunk_id": "d8d0a64a-13c6-4f3e-8229-3fac29842076",
-    "doc_id": "021d9086-3ed3-4f4c-a223-624d80d56d1c",
+    "chunk_id": "485bb80f-7058-4431-ab02-536397eaa619",
+    "doc_id": "2532b6ac-370c-4078-864a-3180924739e3",
+    "content": "The authentication subsystem issues short-lived JSON Web Tokens (JWT) for stateless API access and long-lived refresh tokens stored securely in HTTP-only cookies. Access tokens have an expiration lifetime configured via the CLI flag `--token-expiry-seconds` (defaults to 3600 seconds / 60 minutes).\n\nWhen an access token passes its expiration window, API gateways reject the request and immediately raise the error code `ERR_AUTH_TOKEN_EXPIRED`. The client must then exchange its refresh token before retrying.\n\n```json\n{\n  \"error\": \"ERR_AUTH_TOKEN_EXPIRED\",\n  \"message\": \"Access token expired. Please refresh session credentials.\",\n  \"status_code\": 401\n}\n```",
+    "source_url": null,
+    "section_title": "JWT Architecture and Token Lifecycle",
+    "char_count": 659,
+    "token_count": 87,
+    "metadata": {}
+  },
+  {
+    "chunk_id": "32c53daa-aaa0-47ec-b4ef-f4e4d900ec45",
+    "doc_id": "2532b6ac-370c-4078-864a-3180924739e3",
+    "content": "To renew session credentials without prompting the user to enter passwords again, client applications dispatch an authenticated request to `POST /api/v1/auth/refresh`.\n\nThe core function `refresh_access_token` verifies the cryptographically signed refresh token against the rotation whitelist:\n\n```python\ndef refresh_access_token(refresh_token: str) -> dict:\n    \"\"\"Validate refresh token and issue a newly signed access token.\"\"\"\n    session = validate_session_whitelist(refresh_token)\n    if not session.is_valid:\n        raise SecurityException(\"ERR_INVALID_SIGNATURE\", \"Invalid or revoked refresh token\")\n    new_token = generate_jwt(user_id=session.user_id, ttl=3600)\n    return {\"access_token\": new_token, \"expires_in\": 3600}\n```\n\nIf cryptographic signature verification fails or tampering is detected, the gateway emits `ERR_INVALID_SIGNATURE` and invalidates the entire session hierarchy.",
+    "source_url": null,
+    "section_title": "Refresh Token Exchange Endpoint",
+    "char_count": 896,
+    "token_count": 93,
+    "metadata": {}
+  },
+  {
+    "chunk_id": "a6a10af6-9f7c-4bda-adb5-d75d41514d15",
+    "doc_id": "2532b6ac-370c-4078-864a-3180924739e3",
+    "content": "Token signing and asymmetric verification use the key defined by `auth.jwt.secret_key` in `config.yaml`. Supported signing algorithms are defined under `auth.jwt.algorithm`, with `HS256` as the default symmetric algorithm and `RS256` for asymmetric multi-service architectures. Never commit `auth.jwt.secret_key` to version control.",
+    "source_url": null,
+    "section_title": "Security Configuration and Secrets",
+    "char_count": 332,
+    "token_count": 39,
+    "metadata": {}
+  },
+  {
+    "chunk_id": "71d8aff4-14ab-4e9a-a958-550e2eac5333",
+    "doc_id": "964566c0-57a3-4b35-a010-22c48bafa857",
+    "content": "Naïve fixed-character chunking algorithms frequently truncate code blocks in half, separating function headers from their implementation logic. The DocuRAG pipeline implements a structure-aware chunker that parses markdown headers (H1 through H3) and enforces atomic boundaries on fenced code blocks (`CODE_FENCE_REGEX`).\n\nThe maximum tokens allocated per chunk is configured using `--token-limit` (default: 512 tokens), while consecutive chunk overlap is governed by `--overlap-ratio` (default: 0.10, representing a 10% sliding token window).\n\n```python\ndef chunk_document(doc: Document, token_limit: int = 512, overlap_ratio: float = 0.1) -> List[Chunk]:\n    \"\"\"Split structured document into token-bounded chunks while keeping code blocks intact.\"\"\"\n    # Enforces boundary preservation for code blocks\n    return _split_section_into_chunks(doc.doc_id, doc.section_title, doc.content, token_limit, overlap_ratio)\n```",
+    "source_url": null,
+    "section_title": "Structure-Aware Chunking Strategy",
+    "char_count": 919,
+    "token_count": 108,
+    "metadata": {}
+  },
+  {
+    "chunk_id": "38a9dc90-b67d-4c2d-9d20-ca8a0f03ab63",
+    "doc_id": "964566c0-57a3-4b35-a010-22c48bafa857",
+    "content": "Dense semantic models excel at understanding paraphrased questions and conceptual similarity, but struggle with out-of-vocabulary technical tokens, rare error strings, and CLI flags. Conversely, BM25 excels at exact keyword and identifier matching but fails on conceptual synonyms.\n\nDocuRAG bridges this semantic-lexical divide by fusing candidate rank lists through Reciprocal Rank Fusion (RRF). RRF scores each chunk according to `1 / (60 + rank)`, deduplicating common chunk IDs and producing a balanced top-k candidate set for Lyd's cross-encoder reranker.",
+    "source_url": null,
+    "section_title": "Hybrid Search Fusion Architecture",
+    "char_count": 560,
+    "token_count": 78,
+    "metadata": {}
+  },
+  {
+    "chunk_id": "cec75777-c4f8-44fd-9e1a-eae46c133e26",
+    "doc_id": "9bd2f71c-7109-4bc6-9279-4f427cf01849",
+    "content": "To sustain heavy concurrent workloads and prevent thread starvation, database connections are managed through an asynchronous pool. The pool capacity is configured by the key `database.pool_size` (default: 20 connections) in `configs/config.yaml`.\n\nDuring intense traffic spikes, the pool may burst beyond baseline up to `database.max_overflow` (default: 10 auxiliary connections). If all available connections remain saturated past the checkout timeout, the driver triggers error `ERR_CONN_TIMEOUT` followed by `ERR_POOL_EXHAUSTED`.\n\n```python\ndef get_db_connection(timeout: float = 5.0):\n    \"\"\"Acquire a checked-out connection from the global pool or raise timeout.\"\"\"\n    connection = pool.acquire(timeout=timeout)\n    if connection is None:\n        raise DatabaseTimeoutError(\"ERR_CONN_TIMEOUT\", \"Exhausted connection pool\")\n    return connection\n```",
+    "source_url": null,
+    "section_title": "Connection Pooling Strategy",
+    "char_count": 855,
+    "token_count": 98,
+    "metadata": {}
+  },
+  {
+    "chunk_id": "b33f222d-ee91-45cb-9da3-b9335999b4de",
+    "doc_id": "9bd2f71c-7109-4bc6-9279-4f427cf01849",
+    "content": "To alleviate primary database contention and prevent bottlenecks on heavy reporting queries, read-only traffic is dynamically routed to replica clusters.\n\nReplicas can be passed via the CLI argument `--db-replica-url` or specified in the service discovery environment. When routing read queries, the engine uses round-robin health checks with exponential backoff on retry. The flag `--max-connections` caps total sockets per worker process.",
+    "source_url": null,
+    "section_title": "Read Replica Routing and Load Distribution",
+    "char_count": 440,
+    "token_count": 60,
+    "metadata": {}
+  },
+  {
+    "chunk_id": "748d5ad6-857a-471a-b5c8-2d3c33c93bb4",
+    "doc_id": "b77ea56b-06b9-41dc-8ea2-e20f29968c26",
     "content": "This guide explains how JWT tokens work.",
     "source_url": null,
     "section_title": "Overview",
@@ -10,8 +80,8 @@
     "metadata": {}
   },
   {
-    "chunk_id": "04e9769d-9fb8-4c6a-aea0-627152c005fd",
-    "doc_id": "021d9086-3ed3-4f4c-a223-624d80d56d1c",
+    "chunk_id": "914909a3-60a5-4ab5-b1d4-633e3ce0a759",
+    "doc_id": "b77ea56b-06b9-41dc-8ea2-e20f29968c26",
     "content": "Tokens expire after 60 minutes. Use the refresh endpoint to obtain a new token.\n\n`python\ndef refresh():\n    return 'new_token'\n``n",
     "source_url": null,
     "section_title": "Token Refresh",
