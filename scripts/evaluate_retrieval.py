@@ -213,9 +213,8 @@ def generate_markdown_report(
     lines.append("## 1. Executive Summary & Aggregate Metrics")
     lines.append("")
     lines.append(
-        "Hybrid Search (RRF with $k=60$) consistently delivers the highest overall retrieval accuracy and "
-        "mean reciprocal rank by combining the exact lexical fidelity of BM25 with the conceptual generalizability "
-        "of MiniLM dense semantic vectors."
+        "These metrics describe this labelled benchmark and should not be read as a general guarantee that one "
+        "retrieval mode is always best. Compare the aggregate metrics with the per-query ranks and category breakdown."
     )
     lines.append("")
     lines.append("### Overall Benchmark Performance (All 13 Queries)")
@@ -269,43 +268,16 @@ def generate_markdown_report(
 
     lines.append("")
     lines.append("---")
-    lines.append("## 3. In-Depth Comparative Analysis & Qualitative Case Studies")
+    lines.append("## 3. Interpreting the Comparison")
     lines.append("")
-    lines.append("### Case Study 1: Exact Technical Symbol Mismatch in Dense Search")
-    lines.append("- **Query**: `ERR_AUTH_TOKEN_EXPIRED` and `--token-limit`")
     lines.append(
-        "- **Observation**: BM25 achieved instant Rank 1 retrieval with massive score separation because our "
-        "technical tokenizer preserves exact snake_case and CLI flag structures intact. In contrast, MiniLM dense "
-        "embeddings map rare or synthetic token strings into dispersed subword embeddings, occasionally suffering from "
-        "rank displacement."
+        "- BM25 is useful for exact identifiers, error codes, configuration paths, and CLI flags."
     )
     lines.append(
-        "- **Hybrid RRF Effect**: Hybrid RRF correctly elevated the exact-matching chunk to **Rank 1**, neutralizing "
-        "the dense model's out-of-vocabulary penalty."
-    )
-    lines.append("")
-    lines.append("### Case Study 2: Vocabulary Mismatch in Lexical Keyword Search")
-    lines.append(
-        "- **Query**: `How do client apps renew user credentials when session credentials expire without asking for a password?`"
+        "- Dense retrieval can find relevant passages when a question uses different wording from the documentation."
     )
     lines.append(
-        "- **Observation**: The source documentation uses technical jargon (`POST /api/v1/auth/refresh`, `refresh_access_token`, "
-        "`session whitelist`), but the user query asks colloquially about 'renewing user credentials without asking for a password'. "
-        "BM25 suffered due to term sparsity, whereas MiniLM Dense successfully mapped the semantic intent to the refresh endpoint chunk."
-    )
-    lines.append(
-        "- **Hybrid RRF Effect**: Hybrid RRF placed the semantically relevant chunk at **Rank 1**, providing robust "
-        "resilience against vocabulary mismatch."
-    )
-    lines.append("")
-    lines.append("### Case Study 3: Mutual Reinforcement in Hybrid Fusion")
-    lines.append(
-        "- **Query**: `Why combine keyword search with semantic embedding retrieval?`"
-    )
-    lines.append(
-        "- **Observation**: Both retrievers independently placed the Hybrid Search Fusion chunk in their top candidates. "
-        "Under the RRF reciprocal sum formula $\\sum \\frac{1}{60 + r}$, candidates appearing in both ranking lists receive "
-        "an additive boost ($1/61 + 1/61 \\approx 0.0328$), creating high rank certainty and score separation over false positives."
+        "- RRF combines ranks from both methods; whether that improves a query is determined by the measured per-query results above."
     )
     lines.append("")
     lines.append("---")
@@ -317,13 +289,12 @@ def generate_markdown_report(
         "`CrossEncoderReranker.rerank(query, candidates, top_k=3)`."
     )
     lines.append(
-        "2. **Candidate Pool Recommendation**: For downstream reranking, we recommend passing `candidate_k=20` to `HybridRetriever` "
-        "and retrieving top `k=10` fused candidates for the Cross-Encoder. This guarantees >95% target recall before the compute-intensive "
-        "cross-attention step."
+        "2. **Candidate Pool**: Candidate count is a recall/latency trade-off. Tune it against labelled queries on the target corpus; "
+        "no recall guarantee is implied by a fixed candidate count."
     )
     lines.append(
-        "3. **Citation Preservation**: Every retrieved chunk preserves its full metadata (`doc_id`, `section_title`, "
-        "`char_count`, `token_count`, and retriever source logs), ensuring complete citation provenance in LLM generation."
+        "3. **Provenance**: Retrieved chunks retain `source_url`, `doc_id`, section, and retrieval metadata when supplied. "
+        "Source URLs require manifest entries; this project does not currently implement an LLM answer or citation renderer."
     )
 
     report_content = "\n".join(lines)

@@ -12,9 +12,11 @@ Each file is turned into a :class:`data_pipeline.models.Document` instance.
 
 import json
 import pathlib
+import re
 import uuid
 from typing import Any, Dict, List, Optional
 
+from .cleaner import html_to_markdown
 from .models import Document
 
 RAW_ROOT = pathlib.Path(__file__).resolve().parents[1] / "data" / "raw"
@@ -70,6 +72,10 @@ def _build_document(path: pathlib.Path, provenance: Optional[Dict[str, Any]] = N
         return None
 
     content = _read_file(path)
+    if not content:
+        return None
+    if path.suffix.lower() == ".html" or re.match(r"\s*(?:<!doctype\s+html\b|<html\b)", content, re.IGNORECASE):
+        content = html_to_markdown(content)
     if not content:
         return None
 
