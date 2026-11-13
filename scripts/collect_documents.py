@@ -10,6 +10,7 @@ import argparse
 import json
 from pathlib import Path
 from urllib.request import Request, urlopen
+from bs4 import BeautifulSoup
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -24,18 +25,29 @@ def main() -> None:
     raw_dir = ROOT / "data" / "raw"
     raw_dir.mkdir(parents=True, exist_ok=True)
     provenance = {}
+    
     for filename, entry in documents.items():
         url = entry.get("source_url")
         if not url:
             raise ValueError(f"{filename} has no source_url")
         destination = raw_dir / filename
-        if destination.exists():
-            raise FileExistsError(f"Refusing to overwrite existing file: {destination}")
-        request = Request(url, headers={"User-Agent": "DocuRAG documentation collector"})
+        
+        request = Request(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"})
         with urlopen(request, timeout=30) as response:
-            destination.write_bytes(response.read())
+            html_content = response.read().decode("utf-8")
+
+        # Parse HTML and extract clean readable text
+        soup = BeautifulSoup(html_content, "html.parser")
+        for element in soup(["script", "style", "nav", "footer", "header"]):
+            element.decompose()
+
+        body = soup.find(role="main") or soup.find("div", class_="body") or soup.body
+        clean_text = body.get_text(separator="\n", strip=True) if body else soup.get_text(separator="\n", strip=True)
+
+        destination.write_text(clean_text, encoding="utf-8")
         provenance[filename] = entry
-        print(f"Saved {url} -> {destination}")
+        print(f"Saved & Cleaned {url} -> {destination}")
+        
     (ROOT / "data" / "source_manifest.json").write_text(json.dumps({"documents": provenance}, indent=2) + "\n", encoding="utf-8")
 
 

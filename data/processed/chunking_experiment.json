@@ -2,64 +2,64 @@
   {
     "token_limit": 256,
     "overlap_ratio": 0.0,
-    "chunk_count": 207,
-    "average_tokens": 244.72,
+    "chunk_count": 184,
+    "average_tokens": 157.41,
     "max_tokens": 256
   },
   {
     "token_limit": 256,
     "overlap_ratio": 0.1,
-    "chunk_count": 229,
-    "average_tokens": 245.45,
+    "chunk_count": 193,
+    "average_tokens": 162.76,
     "max_tokens": 256
   },
   {
     "token_limit": 256,
     "overlap_ratio": 0.2,
-    "chunk_count": 255,
-    "average_tokens": 248.26,
+    "chunk_count": 203,
+    "average_tokens": 169.81,
     "max_tokens": 256
   },
   {
     "token_limit": 512,
     "overlap_ratio": 0.0,
+    "chunk_count": 129,
+    "average_tokens": 224.52,
+    "max_tokens": 512
+  },
+  {
+    "token_limit": 512,
+    "overlap_ratio": 0.1,
+    "chunk_count": 135,
+    "average_tokens": 229.65,
+    "max_tokens": 512
+  },
+  {
+    "token_limit": 512,
+    "overlap_ratio": 0.2,
+    "chunk_count": 137,
+    "average_tokens": 242.68,
+    "max_tokens": 512
+  },
+  {
+    "token_limit": 1024,
+    "overlap_ratio": 0.0,
+    "chunk_count": 104,
+    "average_tokens": 278.49,
+    "max_tokens": 1024
+  },
+  {
+    "token_limit": 1024,
+    "overlap_ratio": 0.1,
     "chunk_count": 105,
-    "average_tokens": 482.46,
-    "max_tokens": 512
-  },
-  {
-    "token_limit": 512,
-    "overlap_ratio": 0.1,
-    "chunk_count": 114,
-    "average_tokens": 492.24,
-    "max_tokens": 512
-  },
-  {
-    "token_limit": 512,
-    "overlap_ratio": 0.2,
-    "chunk_count": 128,
-    "average_tokens": 492.19,
-    "max_tokens": 512
-  },
-  {
-    "token_limit": 1024,
-    "overlap_ratio": 0.0,
-    "chunk_count": 54,
-    "average_tokens": 938.11,
-    "max_tokens": 1024
-  },
-  {
-    "token_limit": 1024,
-    "overlap_ratio": 0.1,
-    "chunk_count": 58,
-    "average_tokens": 963.1,
+    "average_tokens": 285.55,
     "max_tokens": 1024
   },
   {
     "token_limit": 1024,
     "overlap_ratio": 0.2,
-    "chunk_count": 65,
-    "average_tokens": 961.38,
+    "chunk_count": 108,
+    "average_tokens": 292.73,
     "max_tokens": 1024
   }
 ]
