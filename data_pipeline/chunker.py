@@ -13,6 +13,7 @@ from .cleaner import clean_text
 # Regex patterns for markdown headers (H1‑H3) and fenced code blocks
 HEADER_REGEX = re.compile(r"^(#{1,3})\s+(.*)")
 CODE_FENCE_REGEX = re.compile(r"^```")
+SECTION_NUMBER_PREFIX = re.compile(r"^\d+(?:\.\d+)*\.?\s+")
 
 
 def _token_count(text: str) -> int:
@@ -160,7 +161,14 @@ def chunk_document(
     section_urls = doc.metadata.get("section_urls", {})
     for title, sec_lines, first_line in sections:
         sec_text = "\n".join(sec_lines)
-        source_url = section_urls.get(title) or section_urls.get(title.split(" > ")[-1]) or doc.source_url
+        leaf_heading = title.split(" > ")[-1]
+        unnumbered_heading = SECTION_NUMBER_PREFIX.sub("", leaf_heading)
+        source_url = (
+            section_urls.get(title)
+            or section_urls.get(leaf_heading)
+            or section_urls.get(unnumbered_heading)
+            or doc.source_url
+        )
         sec_chunks = _split_section_into_chunks(
             doc_id=doc.doc_id,
             section_title=title,

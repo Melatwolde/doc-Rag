@@ -16,6 +16,7 @@ import uuid
 from typing import Any, Dict, List, Optional
 
 from .models import Document
+from .html_to_markdown import html_to_markdown
 
 RAW_ROOT = pathlib.Path(__file__).resolve().parents[1] / "data" / "raw"
 MANIFEST_PATH = RAW_ROOT.parent / "source_manifest.json"
@@ -37,7 +38,7 @@ def load_source_manifest(path: pathlib.Path = MANIFEST_PATH) -> Dict[str, Dict[s
     return {str(name): dict(value) for name, value in entries.items() if isinstance(value, dict)}
 
 
-def _read_file(path: pathlib.Path) -> str:
+def _read_file(path: pathlib.Path, source_url: str | None = None) -> str:
     """Read a file as UTF‑8 text, returning an empty string on failure.
 
     The function deliberately catches ``UnicodeDecodeError`` because some raw
@@ -45,7 +46,8 @@ def _read_file(path: pathlib.Path) -> str:
     the file – the caller can decide whether to raise or ignore.
     """
     try:
-        return path.read_text(encoding="utf-8")
+        text = path.read_text(encoding="utf-8")
+        return html_to_markdown(text, base_url=source_url) if path.suffix.lower() == ".html" else text
     except Exception:
         return ""
 
@@ -69,11 +71,11 @@ def _build_document(path: pathlib.Path, provenance: Optional[Dict[str, Any]] = N
     if path.suffix.lower() not in {".md", ".txt", ".html"}:
         return None
 
-    content = _read_file(path)
+    provenance = provenance or {}
+    content = _read_file(path, provenance.get("source_url"))
     if not content:
         return None
 
-    provenance = provenance or {}
     # A stable ID lets persisted vector indexes and citations survive re-runs.
     doc_id = str(uuid.uuid5(uuid.NAMESPACE_URL, str(path.resolve())))
     metadata = {

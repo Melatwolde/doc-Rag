@@ -169,10 +169,18 @@ if search_triggered:
                 st.subheader("Generated Answer")
                 st.caption("Extractive answer assembled from cited documentation passages.")
                 st.markdown(response["answer"])
+                st.caption(f"End-to-end latency: {response.get('latency_ms', 0.0):.2f} ms")
 
                 st.markdown("### Citations & Sources")
                 for cit in response.get("citations", []):
-                    st.markdown(f"- `Chunk ID: {cit}`")
+                    section = cit.get("heading_path") or cit.get("section_title") or "Documentation section"
+                    location = ""
+                    if cit.get("line_start") is not None:
+                        location = f" (lines {cit['line_start']}–{cit.get('line_end', cit['line_start'])})"
+                    if cit.get("source_url"):
+                        st.markdown(f"- [{section}]({cit['source_url']}){location} — `{cit['chunk_id']}`")
+                    else:
+                        st.markdown(f"- {section}{location} — `{cit['chunk_id']}` (local source)")
 
             with col2:
                 st.subheader(
@@ -182,7 +190,8 @@ if search_triggered:
                 )
                 reranked = response.get("reranked_chunks", [])
                 for idx, chunk in enumerate(reranked, 1):
-                    section_title = chunk.get("section_title") or "Section"
+                    metadata = chunk.get("metadata", {})
+                    section_title = chunk.get("section_title") or metadata.get("section_title") or "Section"
                     score = float(
                         chunk.get("score", 0.0)
                         if use_cross_encoder
@@ -192,3 +201,5 @@ if search_triggered:
                     with st.expander(f"[{idx}] {section_title} ({score_label}: {score:.4f})"):
                         st.code(chunk.get("content", ""), language="markdown")
                         st.caption(f"Chunk ID: `{chunk.get('chunk_id')}`")
+                        if metadata.get("source_url"):
+                            st.link_button("Open source section", metadata["source_url"])

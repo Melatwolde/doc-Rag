@@ -10,6 +10,7 @@ Combines:
 from __future__ import annotations
 
 import re
+import time
 from pathlib import Path
 from typing import Any, Dict
 
@@ -63,6 +64,7 @@ class HybridRAGPipeline:
 
     def run(self, query: str) -> Dict[str, Any]:
         """Execute the complete RAG pipeline for a given user query."""
+        started_at = time.perf_counter()
         query = query.strip()
         if not query:
             raise ValueError("query must not be empty")
@@ -124,9 +126,20 @@ class HybridRAGPipeline:
                 "citations": [],
                 "retrieved_chunks": retrieved_results,
                 "reranked_chunks": reranked_passages,
+                "latency_ms": round((time.perf_counter() - started_at) * 1000, 2),
             }
 
-        citations = [chunk["chunk_id"] for chunk in reranked_passages]
+        citations = []
+        for chunk in reranked_passages:
+            metadata = chunk.get("metadata", {})
+            citations.append({
+                "chunk_id": chunk["chunk_id"],
+                "section_title": chunk.get("section_title") or metadata.get("section_title"),
+                "source_url": metadata.get("source_url"),
+                "heading_path": metadata.get("heading_path"),
+                "line_start": metadata.get("line_start"),
+                "line_end": metadata.get("line_end"),
+            })
         answer_parts = []
         for passage in reranked_passages:
             section_title = passage.get("section_title") or "Documentation"
@@ -144,4 +157,5 @@ class HybridRAGPipeline:
             "citations": citations,
             "retrieved_chunks": retrieved_results,
             "reranked_chunks": reranked_passages,
+            "latency_ms": round((time.perf_counter() - started_at) * 1000, 2),
         }
