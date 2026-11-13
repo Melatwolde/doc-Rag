@@ -32,3 +32,18 @@ python -m data_pipeline.run_pipeline
 The pipeline copies the manifest's source URL and section-specific URL to every
 chunk, together with its heading path and source line range. It also saves the
 chunk-size/overlap experiment to `data/processed/chunking_experiment.json`.
+
+## Reliability evaluation and demo
+
+Run the system evaluation after creating `chunks.json`. It evaluates grounded
+answer accuracy, citation accuracy, correct/false abstention rates, and latency
+at several explicitly reported confidence thresholds.
+
+```sh
+python scripts/evaluate_system.py
+streamlit run app/streamlit_app.py
+```
+
+The first command creates `system_evaluation_report.md`; the second launches the
+interactive demo. Source links are clickable only when verified URLs have been
+provided through the source manifest.

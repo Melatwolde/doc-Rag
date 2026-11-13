@@ -10,16 +10,23 @@ import argparse
 import json
 from pathlib import Path
 from urllib.request import Request, urlopen
-from bs4 import BeautifulSoup
+import sys
 
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from data_pipeline.html_to_markdown import html_to_markdown
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Collect approved documentation URLs")
     parser.add_argument("manifest", type=Path, help="JSON manifest with a 'documents' object")
+    parser.add_argument("--overwrite", action="store_true", help="Refresh an existing collected document")
     args = parser.parse_args()
+    if not args.manifest.is_file():
+        parser.error(f"Manifest not found: {args.manifest}")
     manifest = json.loads(args.manifest.read_text(encoding="utf-8"))
     documents = manifest.get("documents", manifest)
     raw_dir = ROOT / "data" / "raw"
@@ -31,22 +38,20 @@ def main() -> None:
         if not url:
             raise ValueError(f"{filename} has no source_url")
         destination = raw_dir / filename
+        if destination.exists() and not args.overwrite:
+            raise FileExistsError(f"Refusing to overwrite {destination}. Re-run with --overwrite to refresh it.")
         
         request = Request(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"})
         with urlopen(request, timeout=30) as response:
-            html_content = response.read().decode("utf-8")
+            raw_text = response.read().decode("utf-8", errors="replace")
+            content_type = response.headers.get_content_type()
 
-        # Parse HTML and extract clean readable text
-        soup = BeautifulSoup(html_content, "html.parser")
-        for element in soup(["script", "style", "nav", "footer", "header"]):
-            element.decompose()
-
-        body = soup.find(role="main") or soup.find("div", class_="body") or soup.body
-        clean_text = body.get_text(separator="\n", strip=True) if body else soup.get_text(separator="\n", strip=True)
-
-        destination.write_text(clean_text, encoding="utf-8")
+        if content_type == "text/html" or "<html" in raw_text.lower()[:1000]:
+            destination.write_text(html_to_markdown(raw_text, base_url=url), encoding="utf-8")
+        else:
+            destination.write_text(raw_text, encoding="utf-8")
         provenance[filename] = entry
-        print(f"Saved & Cleaned {url} -> {destination}")
+        print(f"Saved {url} -> {destination}")
         
     (ROOT / "data" / "source_manifest.json").write_text(json.dumps({"documents": provenance}, indent=2) + "\n", encoding="utf-8")
 

@@ -1,0 +1,423 @@
+{
+  "metrics": [
+    {
+      "threshold": 0.2,
+      "grounded_answer_accuracy": 61.5,
+      "citation_accuracy": 57.1,
+      "correct_abstention_rate": 66.7,
+      "false_abstention_rate": 0.0,
+      "mean_latency_ms": 17.01,
+      "p95_latency_ms": 18.93
+    },
+    {
+      "threshold": 0.45,
+      "grounded_answer_accuracy": 61.5,
+      "citation_accuracy": 61.5,
+      "correct_abstention_rate": 100.0,
+      "false_abstention_rate": 0.0,
+      "mean_latency_ms": 13.47,
+      "p95_latency_ms": 15.35
+    },
+    {
+      "threshold": 0.7,
+      "grounded_answer_accuracy": 46.2,
+      "citation_accuracy": 60.0,
+      "correct_abstention_rate": 100.0,
+      "false_abstention_rate": 23.1,
+      "mean_latency_ms": 16.33,
+      "p95_latency_ms": 19.19
+    }
+  ],
+  "records": {
+    "0.2": [
+      {
+        "query": "if statements",
+        "answerable": true,
+        "is_abstaining": false,
+        "has_relevant_evidence": false,
+        "has_relevant_citation": false,
+        "latency_ms": 24.82
+      },
+      {
+        "query": "for statements",
+        "answerable": true,
+        "is_abstaining": false,
+        "has_relevant_evidence": true,
+        "has_relevant_citation": true,
+        "latency_ms": 16.96
+      },
+      {
+        "query": "defining functions",
+        "answerable": true,
+        "is_abstaining": false,
+        "has_relevant_evidence": false,
+        "has_relevant_citation": false,
+        "latency_ms": 16.26
+      },
+      {
+        "query": "dictionaries",
+        "answerable": true,
+        "is_abstaining": false,
+        "has_relevant_evidence": true,
+        "has_relevant_citation": true,
+        "latency_ms": 14.36
+      },
+      {
+        "query": "Reading and Writing Files",
+        "answerable": true,
+        "is_abstaining": false,
+        "has_relevant_evidence": false,
+        "has_relevant_citation": false,
+        "latency_ms": 17.35
+      },
+      {
+        "query": "Handling Exceptions",
+        "answerable": true,
+        "is_abstaining": false,
+        "has_relevant_evidence": true,
+        "has_relevant_citation": true,
+        "latency_ms": 15.51
+      },
+      {
+        "query": "Inheritance",
+        "answerable": true,
+        "is_abstaining": false,
+        "has_relevant_evidence": false,
+        "has_relevant_citation": false,
+        "latency_ms": 18.75
+      },
+      {
+        "query": "How do you make decisions and branch your code based on conditions?",
+        "answerable": true,
+        "is_abstaining": false,
+        "has_relevant_evidence": false,
+        "has_relevant_citation": false,
+        "latency_ms": 18.93
+      },
+      {
+        "query": "How can I loop over items in a list or a sequence?",
+        "answerable": true,
+        "is_abstaining": false,
+        "has_relevant_evidence": true,
+        "has_relevant_citation": true,
+        "latency_ms": 15.96
+      },
+      {
+        "query": "What is the best way to organize code into reusable blocks and modules?",
+        "answerable": true,
+        "is_abstaining": false,
+        "has_relevant_evidence": true,
+        "has_relevant_citation": true,
+        "latency_ms": 16.28
+      },
+      {
+        "query": "How do I catch errors so my script doesn't crash when something goes wrong?",
+        "answerable": true,
+        "is_abstaining": false,
+        "has_relevant_evidence": true,
+        "has_relevant_citation": true,
+        "latency_ms": 16.61
+      },
+      {
+        "query": "How do classes and object-oriented programming work in Python?",
+        "answerable": true,
+        "is_abstaining": false,
+        "has_relevant_evidence": true,
+        "has_relevant_citation": true,
+        "latency_ms": 15.94
+      },
+      {
+        "query": "How do you store collections of key-value data efficiently?",
+        "answerable": true,
+        "is_abstaining": false,
+        "has_relevant_evidence": true,
+        "has_relevant_citation": true,
+        "latency_ms": 15.06
+      },
+      {
+        "query": "How do I configure a Kubernetes service mesh in this project?",
+        "answerable": false,
+        "is_abstaining": true,
+        "has_relevant_evidence": false,
+        "has_relevant_citation": false,
+        "latency_ms": 15.96
+      },
+      {
+        "query": "What is the company holiday policy?",
+        "answerable": false,
+        "is_abstaining": true,
+        "has_relevant_evidence": false,
+        "has_relevant_citation": false,
+        "latency_ms": 16.6
+      },
+      {
+        "query": "How can I train a computer vision model with these documents?",
+        "answerable": false,
+        "is_abstaining": false,
+        "has_relevant_evidence": false,
+        "has_relevant_citation": false,
+        "latency_ms": 16.88
+      }
+    ],
+    "0.45": [
+      {
+        "query": "if statements",
+        "answerable": true,
+        "is_abstaining": false,
+        "has_relevant_evidence": false,
+        "has_relevant_citation": false,
+        "latency_ms": 14.02
+      },
+      {
+        "query": "for statements",
+        "answerable": true,
+        "is_abstaining": false,
+        "has_relevant_evidence": true,
+        "has_relevant_citation": true,
+        "latency_ms": 13.77
+      },
+      {
+        "query": "defining functions",
+        "answerable": true,
+        "is_abstaining": false,
+        "has_relevant_evidence": false,
+        "has_relevant_citation": false,
+        "latency_ms": 12.03
+      },
+      {
+        "query": "dictionaries",
+        "answerable": true,
+        "is_abstaining": false,
+        "has_relevant_evidence": true,
+        "has_relevant_citation": true,
+        "latency_ms": 12.2
+      },
+      {
+        "query": "Reading and Writing Files",
+        "answerable": true,
+        "is_abstaining": false,
+        "has_relevant_evidence": false,
+        "has_relevant_citation": false,
+        "latency_ms": 13.22
+      },
+      {
+        "query": "Handling Exceptions",
+        "answerable": true,
+        "is_abstaining": false,
+        "has_relevant_evidence": true,
+        "has_relevant_citation": true,
+        "latency_ms": 12.04
+      },
+      {
+        "query": "Inheritance",
+        "answerable": true,
+        "is_abstaining": false,
+        "has_relevant_evidence": false,
+        "has_relevant_citation": false,
+        "latency_ms": 12.02
+      },
+      {
+        "query": "How do you make decisions and branch your code based on conditions?",
+        "answerable": true,
+        "is_abstaining": false,
+        "has_relevant_evidence": false,
+        "has_relevant_citation": false,
+        "latency_ms": 13.05
+      },
+      {
+        "query": "How can I loop over items in a list or a sequence?",
+        "answerable": true,
+        "is_abstaining": false,
+        "has_relevant_evidence": true,
+        "has_relevant_citation": true,
+        "latency_ms": 13.67
+      },
+      {
+        "query": "What is the best way to organize code into reusable blocks and modules?",
+        "answerable": true,
+        "is_abstaining": false,
+        "has_relevant_evidence": true,
+        "has_relevant_citation": true,
+        "latency_ms": 14.91
+      },
+      {
+        "query": "How do I catch errors so my script doesn't crash when something goes wrong?",
+        "answerable": true,
+        "is_abstaining": false,
+        "has_relevant_evidence": true,
+        "has_relevant_citation": true,
+        "latency_ms": 15.58
+      },
+      {
+        "query": "How do classes and object-oriented programming work in Python?",
+        "answerable": true,
+        "is_abstaining": false,
+        "has_relevant_evidence": true,
+        "has_relevant_citation": true,
+        "latency_ms": 14.61
+      },
+      {
+        "query": "How do you store collections of key-value data efficiently?",
+        "answerable": true,
+        "is_abstaining": false,
+        "has_relevant_evidence": true,
+        "has_relevant_citation": true,
+        "latency_ms": 14.03
+      },
+      {
+        "query": "How do I configure a Kubernetes service mesh in this project?",
+        "answerable": false,
+        "is_abstaining": true,
+        "has_relevant_evidence": false,
+        "has_relevant_citation": false,
+        "latency_ms": 15.35
+      },
+      {
+        "query": "What is the company holiday policy?",
+        "answerable": false,
+        "is_abstaining": true,
+        "has_relevant_evidence": false,
+        "has_relevant_citation": false,
+        "latency_ms": 12.04
+      },
+      {
+        "query": "How can I train a computer vision model with these documents?",
+        "answerable": false,
+        "is_abstaining": true,
+        "has_relevant_evidence": false,
+        "has_relevant_citation": false,
+        "latency_ms": 12.92
+      }
+    ],
+    "0.7": [
+      {
+        "query": "if statements",
+        "answerable": true,
+        "is_abstaining": false,
+        "has_relevant_evidence": false,
+        "has_relevant_citation": false,
+        "latency_ms": 13.36
+      },
+      {
+        "query": "for statements",
+        "answerable": true,
+        "is_abstaining": false,
+        "has_relevant_evidence": true,
+        "has_relevant_citation": true,
+        "latency_ms": 14.22
+      },
+      {
+        "query": "defining functions",
+        "answerable": true,
+        "is_abstaining": false,
+        "has_relevant_evidence": false,
+        "has_relevant_citation": false,
+        "latency_ms": 19.19
+      },
+      {
+        "query": "dictionaries",
+        "answerable": true,
+        "is_abstaining": false,
+        "has_relevant_evidence": true,
+        "has_relevant_citation": true,
+        "latency_ms": 16.44
+      },
+      {
+        "query": "Reading and Writing Files",
+        "answerable": true,
+        "is_abstaining": false,
+        "has_relevant_evidence": false,
+        "has_relevant_citation": false,
+        "latency_ms": 17.36
+      },
+      {
+        "query": "Handling Exceptions",
+        "answerable": true,
+        "is_abstaining": false,
+        "has_relevant_evidence": true,
+        "has_relevant_citation": true,
+        "latency_ms": 14.78
+      },
+      {
+        "query": "Inheritance",
+        "answerable": true,
+        "is_abstaining": false,
+        "has_relevant_evidence": false,
+        "has_relevant_citation": false,
+        "latency_ms": 19.57
+      },
+      {
+        "query": "How do you make decisions and branch your code based on conditions?",
+        "answerable": true,
+        "is_abstaining": true,
+        "has_relevant_evidence": false,
+        "has_relevant_citation": false,
+        "latency_ms": 16.04
+      },
+      {
+        "query": "How can I loop over items in a list or a sequence?",
+        "answerable": true,
+        "is_abstaining": false,
+        "has_relevant_evidence": true,
+        "has_relevant_citation": true,
+        "latency_ms": 16.7
+      },
+      {
+        "query": "What is the best way to organize code into reusable blocks and modules?",
+        "answerable": true,
+        "is_abstaining": true,
+        "has_relevant_evidence": true,
+        "has_relevant_citation": false,
+        "latency_ms": 18.27
+      },
+      {
+        "query": "How do I catch errors so my script doesn't crash when something goes wrong?",
+        "answerable": true,
+        "is_abstaining": true,
+        "has_relevant_evidence": true,
+        "has_relevant_citation": false,
+        "latency_ms": 17.01
+      },
+      {
+        "query": "How do classes and object-oriented programming work in Python?",
+        "answerable": true,
+        "is_abstaining": false,
+        "has_relevant_evidence": true,
+        "has_relevant_citation": true,
+        "latency_ms": 18.09
+      },
+      {
+        "query": "How do you store collections of key-value data efficiently?",
+        "answerable": true,
+        "is_abstaining": false,
+        "has_relevant_evidence": true,
+        "has_relevant_citation": true,
+        "latency_ms": 14.72
+      },
+      {
+        "query": "How do I configure a Kubernetes service mesh in this project?",
+        "answerable": false,
+        "is_abstaining": true,
+        "has_relevant_evidence": false,
+        "has_relevant_citation": false,
+        "latency_ms": 15.55
+      },
+      {
+        "query": "What is the company holiday policy?",
+        "answerable": false,
+        "is_abstaining": true,
+        "has_relevant_evidence": false,
+        "has_relevant_citation": false,
+        "latency_ms": 14.34
+      },
+      {
+        "query": "How can I train a computer vision model with these documents?",
+        "answerable": false,
+        "is_abstaining": true,
+        "has_relevant_evidence": false,
+        "has_relevant_citation": false,
+        "latency_ms": 15.64
+      }
+    ]
+  }
+}

@@ -25,3 +25,13 @@ def test_chunks_preserve_explicit_source_and_section_provenance():
     assert all(chunk.metadata["source_file"] == "guide.md" for chunk in chunks)
     assert all(chunk.metadata["line_start"] <= chunk.metadata["line_end"] for chunk in chunks)
     assert "```python" in chunks[-1].content and "```" in chunks[-1].content
+
+
+def test_numbered_heading_resolves_manifest_section_url():
+    document = Document(
+        doc_id="doc-2", content="# 4. Control Flow\n\n## 4.1. if Statements\n\nEvidence.",
+        source_url="https://docs.example.com/controlflow",
+        metadata={"section_urls": {"if Statements": "https://docs.example.com/controlflow#if-statements"}},
+    )
+    chunk = chunk_document(document, token_limit=50, overlap_ratio=0)[0]
+    assert chunk.source_url == "https://docs.example.com/controlflow#if-statements"

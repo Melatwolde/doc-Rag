@@ -206,9 +206,8 @@ def generate_markdown_report(
     lines.append("## 1. Executive Summary & Aggregate Metrics")
     lines.append("")
     lines.append(
-        "Hybrid Search (RRF with $k=60$) consistently delivers the highest overall retrieval accuracy and "
-        "mean reciprocal rank by combining the exact lexical fidelity of BM25 with the conceptual generalizability "
-        "of MiniLM dense semantic vectors."
+        "These metrics describe this labelled benchmark and should not be read as a general guarantee that one "
+        "retrieval mode is always best. Compare the aggregate metrics with the per-query ranks and category breakdown."
     )
     lines.append("")
     lines.append("### Overall Benchmark Performance (All 13 Queries)")
@@ -262,31 +261,26 @@ def generate_markdown_report(
 
     lines.append("")
     lines.append("---")
-    lines.append("## 3. In-Depth Comparative Analysis & Qualitative Case Studies")
+    lines.append("## 3. Interpreting the Comparison")
     lines.append("")
-    lines.append("### Case Study 1: Exact Syntax Matching in Dense Search")
-    lines.append(
-        "- **Observation**: BM25 achieved instant Rank 1 retrieval with strong score separation when queries "
-        "contained exact keywords like 'if statements' or 'dictionaries'. Dense embeddings mapped semantic "
-        "meaning effectively across conversational phrasings."
-    )
-    lines.append(
-        "- **Hybrid RRF Effect**: Hybrid RRF correctly combined lexical and vector results to neutralize out-of-vocabulary penalties."
-    )
-    lines.append("")
-    lines.append("### Case Study 2: Vocabulary Mismatch in Lexical Keyword Search")
-    lines.append(
-        "- **Observation**: Conversational phrasing like 'How do you make decisions and branch your code' matched semantic "
-        "embeddings more readily than exact keyword indexing when terminology varied slightly."
-    )
-    lines.append(
-        "- **Hybrid RRF Effect**: Hybrid RRF placed the relevant chunk at top ranks, providing robust resilience against vocabulary mismatch."
-    )
+    lines.append("- BM25 can help with exact terms and identifiers in the indexed documentation.")
+    lines.append("- Dense retrieval can help when a query paraphrases the source wording.")
+    lines.append("- RRF combines ranks; use the benchmark rows above to judge its effect on this corpus.")
     lines.append("")
     lines.append("---")
-    lines.append("## 4. Downstream Handoff")
+    lines.append("## 4. Downstream Handoff to the Cross-Encoder Reranker")
     lines.append(
-        "1. **Contract Stability**: `HybridRetriever.retrieve(query, top_k=5)` returns `List[SearchResult]` with complete metadata provenance."
+        "1. **Contract Stability**: `HybridRetriever.retrieve(query, top_k=5)` returns `List[SearchResult]` containing "
+        "`chunk_id`, `content`, `score`, and `metadata`. This fulfills the input contract for "
+        "`CrossEncoderReranker.rerank(query, candidates, top_k=3)`."
+    )
+    lines.append(
+        "2. **Candidate Pool**: Candidate count is a recall/latency trade-off. Tune it on labelled queries for the target corpus; "
+        "a fixed candidate count does not guarantee a particular recall."
+    )
+    lines.append(
+        "3. **Provenance**: Retrieved chunks retain `source_url`, `doc_id`, section, and retrieval metadata when supplied. "
+        "Source URLs require manifest entries. The answer stage is extractive, not LLM-generated."
     )
 
     report_content = "\n".join(lines)
