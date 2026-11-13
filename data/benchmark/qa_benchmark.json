@@ -1,0 +1,482 @@
+[
+  {
+    "id": "q001",
+    "question": "What is the default expiration time for JWT access tokens?",
+    "answer": "The default expiration time for JWT access tokens is 3600 seconds (60 minutes), configured via the CLI flag `--token-expiry-seconds`.",
+    "answerable": true,
+    "relevant_chunk_ids": ["485bb80f-7058-4431-ab02-536397eaa619"],
+    "category": "auth"
+  },
+  {
+    "id": "q002",
+    "question": "What error code is raised when a JWT access token expires?",
+    "answer": "The error code `ERR_AUTH_TOKEN_EXPIRED` is raised with HTTP status 401 when an access token expires.",
+    "answerable": true,
+    "relevant_chunk_ids": ["485bb80f-7058-4431-ab02-536397eaa619"],
+    "category": "auth"
+  },
+  {
+    "id": "q003",
+    "question": "How are refresh tokens stored securely?",
+    "answer": "Refresh tokens are stored securely in HTTP-only cookies.",
+    "answerable": true,
+    "relevant_chunk_ids": ["485bb80f-7058-4431-ab02-536397eaa619"],
+    "category": "auth"
+  },
+  {
+    "id": "q004",
+    "question": "What is the CLI flag used to configure JWT token expiry duration?",
+    "answer": "The CLI flag `--token-expiry-seconds` is used to configure the JWT access token expiration lifetime.",
+    "answerable": true,
+    "relevant_chunk_ids": ["485bb80f-7058-4431-ab02-536397eaa619"],
+    "category": "auth"
+  },
+  {
+    "id": "q005",
+    "question": "What endpoint do clients call to exchange a refresh token for a new access token?",
+    "answer": "Clients call `POST /api/v1/auth/refresh` to exchange a refresh token for a new access token.",
+    "answerable": true,
+    "relevant_chunk_ids": ["32c53daa-aaa0-47ec-b4ef-f4e4d900ec45"],
+    "category": "auth"
+  },
+  {
+    "id": "q006",
+    "question": "What function validates the refresh token and issues a new access token?",
+    "answer": "The function `refresh_access_token(refresh_token: str) -> dict` validates the cryptographically signed refresh token against the rotation whitelist and issues a new signed access token.",
+    "answerable": true,
+    "relevant_chunk_ids": ["32c53daa-aaa0-47ec-b4ef-f4e4d900ec45"],
+    "category": "auth"
+  },
+  {
+    "id": "q007",
+    "question": "What error is raised if refresh token signature verification fails?",
+    "answer": "`ERR_INVALID_SIGNATURE` is raised and the entire session hierarchy is invalidated if cryptographic signature verification fails or tampering is detected.",
+    "answerable": true,
+    "relevant_chunk_ids": ["32c53daa-aaa0-47ec-b4ef-f4e4d900ec45"],
+    "category": "auth"
+  },
+  {
+    "id": "q008",
+    "question": "What function does `refresh_access_token` call to validate the session?",
+    "answer": "`refresh_access_token` calls `validate_session_whitelist(refresh_token)` to verify the refresh token against the rotation whitelist.",
+    "answerable": true,
+    "relevant_chunk_ids": ["32c53daa-aaa0-47ec-b4ef-f4e4d900ec45"],
+    "category": "auth"
+  },
+  {
+    "id": "q009",
+    "question": "Where is the JWT secret key configured?",
+    "answer": "The JWT secret key is defined by `auth.jwt.secret_key` in `config.yaml`.",
+    "answerable": true,
+    "relevant_chunk_ids": ["a6a10af6-9f7c-4bda-adb5-d75d41514d15"],
+    "category": "auth"
+  },
+  {
+    "id": "q010",
+    "question": "What is the default JWT signing algorithm?",
+    "answer": "The default signing algorithm is `HS256` (symmetric). `RS256` is also supported for asymmetric multi-service architectures.",
+    "answerable": true,
+    "relevant_chunk_ids": ["a6a10af6-9f7c-4bda-adb5-d75d41514d15"],
+    "category": "auth"
+  },
+  {
+    "id": "q011",
+    "question": "Should `auth.jwt.secret_key` be committed to version control?",
+    "answer": "No, the documentation explicitly states: never commit `auth.jwt.secret_key` to version control.",
+    "answerable": true,
+    "relevant_chunk_ids": ["a6a10af6-9f7c-4bda-adb5-d75d41514d15"],
+    "category": "auth"
+  },
+  {
+    "id": "q012",
+    "question": "Which signing algorithms are supported for JWT tokens?",
+    "answer": "`HS256` (default symmetric) and `RS256` (for asymmetric multi-service architectures) are the supported signing algorithms.",
+    "answerable": true,
+    "relevant_chunk_ids": ["a6a10af6-9f7c-4bda-adb5-d75d41514d15"],
+    "category": "auth"
+  },
+  {
+    "id": "q013",
+    "question": "What type of chunking does DocuRAG use to avoid splitting code blocks?",
+    "answer": "DocuRAG uses a structure-aware chunker that parses markdown headers (H1 through H3) and enforces atomic boundaries on fenced code blocks using `CODE_FENCE_REGEX`.",
+    "answerable": true,
+    "relevant_chunk_ids": ["71d8aff4-14ab-4e9a-a958-550e2eac5333"],
+    "category": "chunking"
+  },
+  {
+    "id": "q014",
+    "question": "What is the default maximum token limit per chunk?",
+    "answer": "The default maximum token limit per chunk is 512 tokens, configured via `--token-limit`.",
+    "answerable": true,
+    "relevant_chunk_ids": ["71d8aff4-14ab-4e9a-a958-550e2eac5333"],
+    "category": "chunking"
+  },
+  {
+    "id": "q015",
+    "question": "What is the default chunk overlap ratio?",
+    "answer": "The default chunk overlap ratio is 0.10 (10%), configured via `--overlap-ratio`, representing a 10% sliding token window.",
+    "answerable": true,
+    "relevant_chunk_ids": ["71d8aff4-14ab-4e9a-a958-550e2eac5333"],
+    "category": "chunking"
+  },
+  {
+    "id": "q016",
+    "question": "What is the name of the function that splits a document into chunks?",
+    "answer": "The function is `chunk_document(doc, token_limit=512, overlap_ratio=0.1)`, which calls `_split_section_into_chunks` internally.",
+    "answerable": true,
+    "relevant_chunk_ids": ["71d8aff4-14ab-4e9a-a958-550e2eac5333"],
+    "category": "chunking"
+  },
+  {
+    "id": "q017",
+    "question": "What CLI flag controls the chunking token limit?",
+    "answer": "The `--token-limit` CLI flag controls the maximum tokens allocated per chunk.",
+    "answerable": true,
+    "relevant_chunk_ids": ["71d8aff4-14ab-4e9a-a958-550e2eac5333"],
+    "category": "chunking"
+  },
+  {
+    "id": "q018",
+    "question": "Why does DocuRAG not use naive fixed-character chunking?",
+    "answer": "Naive fixed-character chunking frequently truncates code blocks in half, separating function headers from their implementation logic. DocuRAG uses structure-aware chunking to avoid this.",
+    "answerable": true,
+    "relevant_chunk_ids": ["71d8aff4-14ab-4e9a-a958-550e2eac5333"],
+    "category": "chunking"
+  },
+  {
+    "id": "q019",
+    "question": "What fusion method does DocuRAG use to combine BM25 and dense retrieval?",
+    "answer": "DocuRAG uses Reciprocal Rank Fusion (RRF). RRF scores each chunk as `1 / (60 + rank)`, deduplicates common chunk IDs, and produces a balanced top-k candidate set.",
+    "answerable": true,
+    "relevant_chunk_ids": ["38a9dc90-b67d-4c2d-9d20-ca8a0f03ab63"],
+    "category": "retrieval"
+  },
+  {
+    "id": "q020",
+    "question": "What is the RRF scoring formula?",
+    "answer": "The RRF scoring formula is `1 / (60 + rank)`, where 60 is the smoothing constant.",
+    "answerable": true,
+    "relevant_chunk_ids": ["38a9dc90-b67d-4c2d-9d20-ca8a0f03ab63"],
+    "category": "retrieval"
+  },
+  {
+    "id": "q021",
+    "question": "Why is BM25 combined with dense retrieval in the hybrid search?",
+    "answer": "Dense models excel at paraphrased questions and conceptual similarity but struggle with out-of-vocabulary technical tokens, rare error strings, and CLI flags. BM25 excels at exact keyword matching but fails on conceptual synonyms. The hybrid approach bridges both weaknesses.",
+    "answerable": true,
+    "relevant_chunk_ids": ["38a9dc90-b67d-4c2d-9d20-ca8a0f03ab63"],
+    "category": "retrieval"
+  },
+  {
+    "id": "q022",
+    "question": "What component consumes the RRF-fused results for further reranking?",
+    "answer": "The cross-encoder reranker (Lyd's component) consumes the RRF-fused top-k candidate set for final reranking.",
+    "answerable": true,
+    "relevant_chunk_ids": ["38a9dc90-b67d-4c2d-9d20-ca8a0f03ab63"],
+    "category": "retrieval"
+  },
+  {
+    "id": "q023",
+    "question": "What is the default database connection pool size?",
+    "answer": "The default database connection pool size is 20 connections, configured by `database.pool_size` in `configs/config.yaml`.",
+    "answerable": true,
+    "relevant_chunk_ids": ["cec75777-c4f8-44fd-9e1a-eae46c133e26"],
+    "category": "database"
+  },
+  {
+    "id": "q024",
+    "question": "What is the maximum overflow for the database connection pool?",
+    "answer": "The maximum overflow (additional burst connections) is 10, configured by `database.max_overflow`.",
+    "answerable": true,
+    "relevant_chunk_ids": ["cec75777-c4f8-44fd-9e1a-eae46c133e26"],
+    "category": "database"
+  },
+  {
+    "id": "q025",
+    "question": "What errors are triggered when all database connections are exhausted?",
+    "answer": "`ERR_CONN_TIMEOUT` followed by `ERR_POOL_EXHAUSTED` are triggered when all connections remain saturated past the checkout timeout.",
+    "answerable": true,
+    "relevant_chunk_ids": ["cec75777-c4f8-44fd-9e1a-eae46c133e26"],
+    "category": "database"
+  },
+  {
+    "id": "q026",
+    "question": "What function acquires a database connection from the pool?",
+    "answer": "`get_db_connection(timeout=5.0)` acquires a checked-out connection from the global pool, raising `DatabaseTimeoutError` with code `ERR_CONN_TIMEOUT` if none are available.",
+    "answerable": true,
+    "relevant_chunk_ids": ["cec75777-c4f8-44fd-9e1a-eae46c133e26"],
+    "category": "database"
+  },
+  {
+    "id": "q027",
+    "question": "What config key sets the database pool size?",
+    "answer": "The config key `database.pool_size` in `configs/config.yaml` sets the pool size (default: 20).",
+    "answerable": true,
+    "relevant_chunk_ids": ["cec75777-c4f8-44fd-9e1a-eae46c133e26"],
+    "category": "database"
+  },
+  {
+    "id": "q028",
+    "question": "How is read-only database traffic routed to replica clusters?",
+    "answer": "Read-only traffic is dynamically routed to replica clusters using round-robin health checks with exponential backoff on retry. Replicas can be configured via `--db-replica-url` or via service discovery environment.",
+    "answerable": true,
+    "relevant_chunk_ids": ["b33f222d-ee91-45cb-9da3-b9335999b4de"],
+    "category": "database"
+  },
+  {
+    "id": "q029",
+    "question": "What CLI argument specifies the database replica URL?",
+    "answer": "The CLI argument `--db-replica-url` is used to specify the database replica URL.",
+    "answerable": true,
+    "relevant_chunk_ids": ["b33f222d-ee91-45cb-9da3-b9335999b4de"],
+    "category": "database"
+  },
+  {
+    "id": "q030",
+    "question": "What flag caps the total database sockets per worker process?",
+    "answer": "The flag `--max-connections` caps the total database sockets per worker process.",
+    "answerable": true,
+    "relevant_chunk_ids": ["b33f222d-ee91-45cb-9da3-b9335999b4de"],
+    "category": "database"
+  },
+  {
+    "id": "q031",
+    "question": "What retry strategy is used for read replica connections?",
+    "answer": "The engine uses round-robin health checks with exponential backoff on retry for read replica connections.",
+    "answerable": true,
+    "relevant_chunk_ids": ["b33f222d-ee91-45cb-9da3-b9335999b4de"],
+    "category": "database"
+  },
+  {
+    "id": "q032",
+    "question": "How does the access token expiry relate to the `expires_in` field returned by refresh?",
+    "answer": "When a new access token is issued via `refresh_access_token`, the returned dictionary includes `expires_in: 3600`, matching the default 3600-second (60-minute) expiry lifetime.",
+    "answerable": true,
+    "relevant_chunk_ids": ["32c53daa-aaa0-47ec-b4ef-f4e4d900ec45", "485bb80f-7058-4431-ab02-536397eaa619"],
+    "category": "auth"
+  },
+  {
+    "id": "q033",
+    "question": "What markdown heading levels does the structure-aware chunker parse?",
+    "answer": "The structure-aware chunker parses markdown headers H1 through H3.",
+    "answerable": true,
+    "relevant_chunk_ids": ["71d8aff4-14ab-4e9a-a958-550e2eac5333"],
+    "category": "chunking"
+  },
+  {
+    "id": "q034",
+    "question": "What regex is used to detect fenced code block boundaries?",
+    "answer": "The `CODE_FENCE_REGEX` is used to detect and enforce atomic boundaries on fenced code blocks.",
+    "answerable": true,
+    "relevant_chunk_ids": ["71d8aff4-14ab-4e9a-a958-550e2eac5333"],
+    "category": "chunking"
+  },
+  {
+    "id": "q035",
+    "question": "What type of questions does BM25 handle better than dense models?",
+    "answer": "BM25 handles exact keyword and identifier matching better, excelling on out-of-vocabulary technical tokens, rare error strings, and CLI flags.",
+    "answerable": true,
+    "relevant_chunk_ids": ["38a9dc90-b67d-4c2d-9d20-ca8a0f03ab63"],
+    "category": "retrieval"
+  },
+  {
+    "id": "q036",
+    "question": "What type of questions does the dense retrieval model handle better than BM25?",
+    "answer": "Dense semantic models excel at understanding paraphrased questions and conceptual similarity.",
+    "answerable": true,
+    "relevant_chunk_ids": ["38a9dc90-b67d-4c2d-9d20-ca8a0f03ab63"],
+    "category": "retrieval"
+  },
+  {
+    "id": "q037",
+    "question": "What default timeout is used in `get_db_connection`?",
+    "answer": "The default timeout in `get_db_connection` is 5.0 seconds.",
+    "answerable": true,
+    "relevant_chunk_ids": ["cec75777-c4f8-44fd-9e1a-eae46c133e26"],
+    "category": "database"
+  },
+  {
+    "id": "q038",
+    "question": "What exception class is raised when no database connections are available?",
+    "answer": "`DatabaseTimeoutError` is raised with error code `ERR_CONN_TIMEOUT` when no connections are available.",
+    "answerable": true,
+    "relevant_chunk_ids": ["cec75777-c4f8-44fd-9e1a-eae46c133e26"],
+    "category": "database"
+  },
+  {
+    "id": "q039",
+    "question": "How does the `validate_session_whitelist` function affect token refresh?",
+    "answer": "It checks whether the refresh token is in the rotation whitelist. If `session.is_valid` is False, it raises a `SecurityException` with `ERR_INVALID_SIGNATURE`, preventing token refresh.",
+    "answerable": true,
+    "relevant_chunk_ids": ["32c53daa-aaa0-47ec-b4ef-f4e4d900ec45"],
+    "category": "auth"
+  },
+  {
+    "id": "q040",
+    "question": "What happens to the session when ERR_INVALID_SIGNATURE is detected?",
+    "answer": "The gateway emits `ERR_INVALID_SIGNATURE` and invalidates the entire session hierarchy.",
+    "answerable": true,
+    "relevant_chunk_ids": ["32c53daa-aaa0-47ec-b4ef-f4e4d900ec45"],
+    "category": "auth"
+  },
+  {
+    "id": "q041",
+    "question": "Can DocuRAG use RS256 for JWT signing instead of HS256?",
+    "answer": "Yes, `RS256` is supported for asymmetric multi-service architectures. It is configured under `auth.jwt.algorithm` in `config.yaml`.",
+    "answerable": true,
+    "relevant_chunk_ids": ["a6a10af6-9f7c-4bda-adb5-d75d41514d15"],
+    "category": "auth"
+  },
+  {
+    "id": "q042",
+    "question": "Where are the supported JWT signing algorithms configured?",
+    "answer": "Supported signing algorithms are defined under `auth.jwt.algorithm` in `config.yaml`.",
+    "answerable": true,
+    "relevant_chunk_ids": ["a6a10af6-9f7c-4bda-adb5-d75d41514d15"],
+    "category": "auth"
+  },
+  {
+    "id": "q043",
+    "question": "What is the difference between `database.pool_size` and `database.max_overflow`?",
+    "answer": "`database.pool_size` (default: 20) sets the baseline pool capacity. `database.max_overflow` (default: 10) allows the pool to burst beyond the baseline during traffic spikes.",
+    "answerable": true,
+    "relevant_chunk_ids": ["cec75777-c4f8-44fd-9e1a-eae46c133e26"],
+    "category": "database"
+  },
+  {
+    "id": "q044",
+    "question": "What is the purpose of the `--overlap-ratio` flag in chunking?",
+    "answer": "`--overlap-ratio` controls the consecutive chunk overlap as a percentage of tokens, defaulting to 0.10 (10% sliding token window) to maintain context continuity.",
+    "answerable": true,
+    "relevant_chunk_ids": ["71d8aff4-14ab-4e9a-a958-550e2eac5333"],
+    "category": "chunking"
+  },
+  {
+    "id": "q045",
+    "question": "What component comes after the hybrid retriever in the DocuRAG pipeline?",
+    "answer": "The cross-encoder reranker comes after the hybrid retriever — it receives the RRF-fused top-k candidates and produces a final ranked set for the generator.",
+    "answerable": true,
+    "relevant_chunk_ids": ["38a9dc90-b67d-4c2d-9d20-ca8a0f03ab63"],
+    "category": "retrieval"
+  },
+  {
+    "id": "q046",
+    "question": "What is the error code returned in the JSON body when a token expires?",
+    "answer": "The JSON body contains `\"error\": \"ERR_AUTH_TOKEN_EXPIRED\"` with `\"status_code\": 401`.",
+    "answerable": true,
+    "relevant_chunk_ids": ["485bb80f-7058-4431-ab02-536397eaa619"],
+    "category": "auth"
+  },
+  {
+    "id": "q047",
+    "question": "What action must the client take after receiving ERR_AUTH_TOKEN_EXPIRED?",
+    "answer": "The client must exchange its refresh token (via `POST /api/v1/auth/refresh`) before retrying the failed request.",
+    "answerable": true,
+    "relevant_chunk_ids": ["485bb80f-7058-4431-ab02-536397eaa619", "32c53daa-aaa0-47ec-b4ef-f4e4d900ec45"],
+    "category": "auth"
+  },
+  {
+    "id": "q048",
+    "question": "What is the purpose of `generate_jwt` in the refresh flow?",
+    "answer": "`generate_jwt(user_id, ttl=3600)` is called by `refresh_access_token` to issue a newly signed access token with a 3600-second TTL.",
+    "answerable": true,
+    "relevant_chunk_ids": ["32c53daa-aaa0-47ec-b4ef-f4e4d900ec45"],
+    "category": "auth"
+  },
+  {
+    "id": "q049",
+    "question": "How is the database pool managed for heavy concurrent workloads?",
+    "answer": "Database connections are managed through an asynchronous pool with a configurable capacity (`database.pool_size`) and burst overflow (`database.max_overflow`) to handle heavy concurrent workloads and prevent thread starvation.",
+    "answerable": true,
+    "relevant_chunk_ids": ["cec75777-c4f8-44fd-9e1a-eae46c133e26"],
+    "category": "database"
+  },
+  {
+    "id": "q050",
+    "question": "What routing strategy is used to distribute read-only queries across replicas?",
+    "answer": "Round-robin health checks with exponential backoff on retry are used to distribute read queries across replica clusters.",
+    "answerable": true,
+    "relevant_chunk_ids": ["b33f222d-ee91-45cb-9da3-b9335999b4de"],
+    "category": "database"
+  },
+  {
+    "id": "q051",
+    "question": "What is the maximum number of parallel Kubernetes pods that can be deployed?",
+    "answer": "I don't know based on the available documentation.",
+    "answerable": false,
+    "relevant_chunk_ids": [],
+    "category": "unanswerable"
+  },
+  {
+    "id": "q052",
+    "question": "What monitoring tool is used to track JWT token usage metrics?",
+    "answer": "I don't know based on the available documentation.",
+    "answerable": false,
+    "relevant_chunk_ids": [],
+    "category": "unanswerable"
+  },
+  {
+    "id": "q053",
+    "question": "How does DocuRAG handle multi-language documentation?",
+    "answer": "I don't know based on the available documentation.",
+    "answerable": false,
+    "relevant_chunk_ids": [],
+    "category": "unanswerable"
+  },
+  {
+    "id": "q054",
+    "question": "What is the billing plan for the hosted DocuRAG cloud service?",
+    "answer": "I don't know based on the available documentation.",
+    "answerable": false,
+    "relevant_chunk_ids": [],
+    "category": "unanswerable"
+  },
+  {
+    "id": "q055",
+    "question": "Which third-party OAuth providers are supported for user login?",
+    "answer": "I don't know based on the available documentation.",
+    "answerable": false,
+    "relevant_chunk_ids": [],
+    "category": "unanswerable"
+  },
+  {
+    "id": "q056",
+    "question": "How many GPUs are required to run the dense retrieval model in production?",
+    "answer": "I don't know based on the available documentation.",
+    "answerable": false,
+    "relevant_chunk_ids": [],
+    "category": "unanswerable"
+  },
+  {
+    "id": "q057",
+    "question": "What is the recommended PostgreSQL version for the database service?",
+    "answer": "I don't know based on the available documentation.",
+    "answerable": false,
+    "relevant_chunk_ids": [],
+    "category": "unanswerable"
+  },
+  {
+    "id": "q058",
+    "question": "How does the system handle GDPR data deletion requests?",
+    "answer": "I don't know based on the available documentation.",
+    "answerable": false,
+    "relevant_chunk_ids": [],
+    "category": "unanswerable"
+  },
+  {
+    "id": "q059",
+    "question": "What is the latency SLA for the refresh token endpoint under peak load?",
+    "answer": "I don't know based on the available documentation.",
+    "answerable": false,
+    "relevant_chunk_ids": [],
+    "category": "unanswerable"
+  },
+  {
+    "id": "q060",
+    "question": "Does DocuRAG support real-time document ingestion via webhooks?",
+    "answer": "I don't know based on the available documentation.",
+    "answerable": false,
+    "relevant_chunk_ids": [],
+    "category": "unanswerable"
+  }
+]

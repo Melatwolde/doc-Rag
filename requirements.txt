@@ -1,0 +1,21 @@
+# Core RAG dependencies
+sentence-transformers>=2.6.0        # CrossEncoder + MiniLM embeddings
+rank-bm25>=0.2.2                     # BM25 retrieval
+faiss-cpu>=1.7.4                     # Dense vector search (CPU)
+
+# LLM generation
+transformers>=4.40.0                 # Flan-T5 local backend
+torch>=2.0.0                         # PyTorch (CPU)
+openai>=1.14.0                       # OpenAI backend (optional)
+
+# Data handling
+numpy>=1.26.0
+tqdm>=4.66.0
+pyyaml>=6.0
+
+# Evaluation & utilities
+pytest>=8.0.0
+pytest-cov>=5.0.0
+
+# App
+streamlit>=1.33.0
