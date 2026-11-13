@@ -1,0 +1,113 @@
+{
+  "summary": {
+    "Recall@3": 69.2,
+    "Recall@5": 69.2,
+    "Recall@10": 69.2
+  },
+  "records": [
+    {
+      "query": "if statements",
+      "category": "Exact Technical",
+      "relevant_rank": null,
+      "hit_at_3": false,
+      "hit_at_5": false,
+      "hit_at_10": false
+    },
+    {
+      "query": "for statements",
+      "category": "Exact Technical",
+      "relevant_rank": 1,
+      "hit_at_3": true,
+      "hit_at_5": true,
+      "hit_at_10": true
+    },
+    {
+      "query": "defining functions",
+      "category": "Exact Technical",
+      "relevant_rank": null,
+      "hit_at_3": false,
+      "hit_at_5": false,
+      "hit_at_10": false
+    },
+    {
+      "query": "dictionaries",
+      "category": "Exact Technical",
+      "relevant_rank": 1,
+      "hit_at_3": true,
+      "hit_at_5": true,
+      "hit_at_10": true
+    },
+    {
+      "query": "Reading and Writing Files",
+      "category": "Exact Technical",
+      "relevant_rank": null,
+      "hit_at_3": false,
+      "hit_at_5": false,
+      "hit_at_10": false
+    },
+    {
+      "query": "Handling Exceptions",
+      "category": "Exact Technical",
+      "relevant_rank": 1,
+      "hit_at_3": true,
+      "hit_at_5": true,
+      "hit_at_10": true
+    },
+    {
+      "query": "Inheritance",
+      "category": "Exact Technical",
+      "relevant_rank": null,
+      "hit_at_3": false,
+      "hit_at_5": false,
+      "hit_at_10": false
+    },
+    {
+      "query": "How do you make decisions and branch your code based on conditions?",
+      "category": "Conceptual / Semantic",
+      "relevant_rank": 1,
+      "hit_at_3": true,
+      "hit_at_5": true,
+      "hit_at_10": true
+    },
+    {
+      "query": "How can I loop over items in a list or a sequence?",
+      "category": "Conceptual / Semantic",
+      "relevant_rank": 2,
+      "hit_at_3": true,
+      "hit_at_5": true,
+      "hit_at_10": true
+    },
+    {
+      "query": "What is the best way to organize code into reusable blocks and modules?",
+      "category": "Conceptual / Semantic",
+      "relevant_rank": 1,
+      "hit_at_3": true,
+      "hit_at_5": true,
+      "hit_at_10": true
+    },
+    {
+      "query": "How do I catch errors so my script doesn't crash when something goes wrong?",
+      "category": "Conceptual / Semantic",
+      "relevant_rank": 1,
+      "hit_at_3": true,
+      "hit_at_5": true,
+      "hit_at_10": true
+    },
+    {
+      "query": "How do classes and object-oriented programming work in Python?",
+      "category": "Conceptual / Semantic",
+      "relevant_rank": 1,
+      "hit_at_3": true,
+      "hit_at_5": true,
+      "hit_at_10": true
+    },
+    {
+      "query": "How do you store collections of key-value data efficiently?",
+      "category": "Conceptual / Semantic",
+      "relevant_rank": 1,
+      "hit_at_3": true,
+      "hit_at_5": true,
+      "hit_at_10": true
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+[
+  {
+    "token_limit": 256,
+    "overlap_ratio": 0.0,
+    "chunk_count": 207,
+    "average_tokens": 244.72,
+    "max_tokens": 256
+  },
+  {
+    "token_limit": 256,
+    "overlap_ratio": 0.1,
+    "chunk_count": 229,
+    "average_tokens": 245.45,
+    "max_tokens": 256
+  },
+  {
+    "token_limit": 256,
+    "overlap_ratio": 0.2,
+    "chunk_count": 255,
+    "average_tokens": 248.26,
+    "max_tokens": 256
+  },
+  {
+    "token_limit": 512,
+    "overlap_ratio": 0.0,
+    "chunk_count": 105,
+    "average_tokens": 482.46,
+    "max_tokens": 512
+  },
+  {
+    "token_limit": 512,
+    "overlap_ratio": 0.1,
+    "chunk_count": 114,
+    "average_tokens": 492.24,
+    "max_tokens": 512
+  },
+  {
+    "token_limit": 512,
+    "overlap_ratio": 0.2,
+    "chunk_count": 128,
+    "average_tokens": 492.19,
+    "max_tokens": 512
+  },
+  {
+    "token_limit": 1024,
+    "overlap_ratio": 0.0,
+    "chunk_count": 54,
+    "average_tokens": 938.11,
+    "max_tokens": 1024
+  },
+  {
+    "token_limit": 1024,
+    "overlap_ratio": 0.1,
+    "chunk_count": 58,
+    "average_tokens": 963.1,
+    "max_tokens": 1024
+  },
+  {
+    "token_limit": 1024,
+    "overlap_ratio": 0.2,
+    "chunk_count": 65,
+    "average_tokens": 961.38,
+    "max_tokens": 1024
+  }
+]

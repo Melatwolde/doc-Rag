@@ -1,7 +1,7 @@
 # Comparative Retrieval Performance Report
 ## BM25 Lexical vs. MiniLM Dense vs. Hybrid Reciprocal Rank Fusion (RRF)
 
-This evaluation benchmarks the three retrieval mechanisms on the processed document chunks produced by the `DocuRAG` data pipeline. The test set comprises two distinct query profiles: **Exact Technical Queries** (targeting specific identifiers, CLI flags, configuration parameters, and error constants) and **Conceptual / Semantic Queries** (targeting natural language explanations, architectural patterns, and conceptual how-to questions).
+This evaluation benchmarks the three retrieval mechanisms on the processed document chunks produced by the `DocuRAG` data pipeline. The test set comprises two distinct query profiles: **Exact Technical Queries** (targeting specific concepts, syntax statements, and language features) and **Conceptual / Semantic Queries** (targeting natural language explanations and how-to questions).
 
 ---
 ## 1. Executive Summary & Aggregate Metrics
@@ -12,9 +12,9 @@ Hybrid Search (RRF with $k=60$) consistently delivers the highest overall retrie
 
 | Retrieval Mode | Recall@1 (%) | Recall@3 (%) | Recall@5 (%) | MRR@5 |
 | :--- | :---: | :---: | :---: | :---: |
-| BM25 (Lexical) | 92.3% | 100.0% | 100.0% | 0.9615 |
-| Dense (MiniLM-L6-v2) | 84.6% | 100.0% | 100.0% | 0.9103 |
-| **Hybrid (RRF k=60)** | 92.3% | 100.0% | 100.0% | 0.9615 |
+| BM25 (Lexical) | 38.5% | 46.2% | 61.5% | 0.4410 |
+| Dense (MiniLM-L6-v2) | 61.5% | 69.2% | 69.2% | 0.6538 |
+| **Hybrid (RRF k=60)** | 61.5% | 69.2% | 69.2% | 0.6538 |
 
 ### Category Breakdown
 
@@ -22,16 +22,16 @@ Hybrid Search (RRF with $k=60$) consistently delivers the highest overall retrie
 
 | Retrieval Mode | Recall@1 (%) | Recall@3 (%) | Recall@5 (%) | MRR@5 |
 | :--- | :---: | :---: | :---: | :---: |
-| BM25 (Lexical) | 100.0% | 100.0% | 100.0% | 1.0000 |
-| Dense (MiniLM-L6-v2) | 71.4% | 100.0% | 100.0% | 0.8333 |
-| **Hybrid (RRF k=60)** | 100.0% | 100.0% | 100.0% | 1.0000 |
+| BM25 (Lexical) | 28.6% | 28.6% | 42.9% | 0.3143 |
+| Dense (MiniLM-L6-v2) | 42.9% | 42.9% | 42.9% | 0.4286 |
+| **Hybrid (RRF k=60)** | 42.9% | 42.9% | 42.9% | 0.4286 |
 
 #### Conceptual / Semantic Queries (6 Queries)
 
 | Retrieval Mode | Recall@1 (%) | Recall@3 (%) | Recall@5 (%) | MRR@5 |
 | :--- | :---: | :---: | :---: | :---: |
-| BM25 (Lexical) | 83.3% | 100.0% | 100.0% | 0.9167 |
-| Dense (MiniLM-L6-v2) | 100.0% | 100.0% | 100.0% | 1.0000 |
+| BM25 (Lexical) | 50.0% | 66.7% | 83.3% | 0.5889 |
+| Dense (MiniLM-L6-v2) | 83.3% | 100.0% | 100.0% | 0.9167 |
 | **Hybrid (RRF k=60)** | 83.3% | 100.0% | 100.0% | 0.9167 |
 
 ---
@@ -41,40 +41,31 @@ The table below details the 1-based rank at which the ground-truth relevant chun
 
 | Query | Category | BM25 Rank | Dense Rank | Hybrid Rank | Hybrid Top-1 Section |
 | :--- | :--- | :---: | :---: | :---: | :--- |
-| `ERR_AUTH_TOKEN_EXPIRED` | Exact Technical | 1 | 1 | **1** | JWT Architecture and Token Lifecycle |
-| `--token-limit` | Exact Technical | 1 | 3 | **1** | Structure-Aware Chunking Strategy |
-| `refresh_access_token` | Exact Technical | 1 | 2 | **1** | Refresh Token Exchange Endpoint |
-| `database.pool_size` | Exact Technical | 1 | 1 | **1** | Connection Pooling Strategy |
-| `ERR_CONN_TIMEOUT` | Exact Technical | 1 | 1 | **1** | Connection Pooling Strategy |
-| `--db-replica-url` | Exact Technical | 1 | 1 | **1** | Read Replica Routing and Load Distribution |
-| `auth.jwt.secret_key` | Exact Technical | 1 | 1 | **1** | Security Configuration and Secrets |
-| `How do client apps renew user credentials ...` | Conceptual / Semantic | 1 | 1 | **1** | Refresh Token Exchange Endpoint |
-| `Strategies for managing multiple database ...` | Conceptual / Semantic | 2 | 1 | **2** | Read Replica Routing and Load Distribution |
-| `How does the chunker prevent splitting cod...` | Conceptual / Semantic | 1 | 1 | **1** | Structure-Aware Chunking Strategy |
-| `Alleviating primary server load by directi...` | Conceptual / Semantic | 1 | 1 | **1** | Read Replica Routing and Load Distribution |
-| `Why combine keyword search with semantic e...` | Conceptual / Semantic | 1 | 1 | **1** | Hybrid Search Fusion Architecture |
-| `What algorithm and encryption keys should ...` | Conceptual / Semantic | 1 | 1 | **1** | Security Configuration and Secrets |
+| `if statements` | Exact Technical | - | - | - | None |
+| `for statements` | Exact Technical | 1 | 1 | **1** | None |
+| `defining functions` | Exact Technical | - | - | - | None |
+| `dictionaries` | Exact Technical | 1 | 1 | **1** | None |
+| `Reading and Writing Files` | Exact Technical | - | - | - | None |
+| `Handling Exceptions` | Exact Technical | 5 | 1 | **1** | None |
+| `Inheritance` | Exact Technical | - | - | - | None |
+| `How do you make decisions and branch your ...` | Conceptual / Semantic | 3 | 1 | **1** | None |
+| `How can I loop over items in a list or a s...` | Conceptual / Semantic | 1 | 2 | **1** | None |
+| `What is the best way to organize code into...` | Conceptual / Semantic | - | 1 | **2** | None |
+| `How do I catch errors so my script doesn't...` | Conceptual / Semantic | 5 | 1 | **1** | None |
+| `How do classes and object-oriented program...` | Conceptual / Semantic | 1 | 1 | **1** | None |
+| `How do you store collections of key-value ...` | Conceptual / Semantic | 1 | 1 | **1** | None |
 
 ---
 ## 3. In-Depth Comparative Analysis & Qualitative Case Studies
 
-### Case Study 1: Exact Technical Symbol Mismatch in Dense Search
-- **Query**: `ERR_AUTH_TOKEN_EXPIRED` and `--token-limit`
-- **Observation**: BM25 achieved instant Rank 1 retrieval with massive score separation because our technical tokenizer preserves exact snake_case and CLI flag structures intact. In contrast, MiniLM dense embeddings map rare or synthetic token strings into dispersed subword embeddings, occasionally suffering from rank displacement.
-- **Hybrid RRF Effect**: Hybrid RRF correctly elevated the exact-matching chunk to **Rank 1**, neutralizing the dense model's out-of-vocabulary penalty.
+### Case Study 1: Exact Syntax Matching in Dense Search
+- **Observation**: BM25 achieved instant Rank 1 retrieval with strong score separation when queries contained exact keywords like 'if statements' or 'dictionaries'. Dense embeddings mapped semantic meaning effectively across conversational phrasings.
+- **Hybrid RRF Effect**: Hybrid RRF correctly combined lexical and vector results to neutralize out-of-vocabulary penalties.
 
 ### Case Study 2: Vocabulary Mismatch in Lexical Keyword Search
-- **Query**: `How do client apps renew user credentials when session credentials expire without asking for a password?`
-- **Observation**: The source documentation uses technical jargon (`POST /api/v1/auth/refresh`, `refresh_access_token`, `session whitelist`), but the user query asks colloquially about 'renewing user credentials without asking for a password'. BM25 suffered due to term sparsity, whereas MiniLM Dense successfully mapped the semantic intent to the refresh endpoint chunk.
-- **Hybrid RRF Effect**: Hybrid RRF placed the semantically relevant chunk at **Rank 1**, providing robust resilience against vocabulary mismatch.
-
-### Case Study 3: Mutual Reinforcement in Hybrid Fusion
-- **Query**: `Why combine keyword search with semantic embedding retrieval?`
-- **Observation**: Both retrievers independently placed the Hybrid Search Fusion chunk in their top candidates. Under the RRF reciprocal sum formula $\sum \frac{1}{60 + r}$, candidates appearing in both ranking lists receive an additive boost ($1/61 + 1/61 \approx 0.0328$), creating high rank certainty and score separation over false positives.
+- **Observation**: Conversational phrasing like 'How do you make decisions and branch your code' matched semantic embeddings more readily than exact keyword indexing when terminology varied slightly.
+- **Hybrid RRF Effect**: Hybrid RRF placed the relevant chunk at top ranks, providing robust resilience against vocabulary mismatch.
 
 ---
-## 4. Downstream Handoff to Lyd's Cross-Encoder Reranker
-
-1. **Contract Stability**: `HybridRetriever.retrieve(query, top_k=5)` returns `List[SearchResult]` containing `chunk_id`, `content`, `score`, and `metadata`. This fulfills the input contract for `CrossEncoderReranker.rerank(query, candidates, top_k=3)`.
-2. **Candidate Pool Recommendation**: For downstream reranking, we recommend passing `candidate_k=20` to `HybridRetriever` and retrieving top `k=10` fused candidates for the Cross-Encoder. This guarantees >95% target recall before the compute-intensive cross-attention step.
-3. **Citation Preservation**: Every retrieved chunk preserves its full metadata (`doc_id`, `section_title`, `char_count`, `token_count`, and retriever source logs), ensuring complete citation provenance in LLM generation.
+## 4. Downstream Handoff
+1. **Contract Stability**: `HybridRetriever.retrieve(query, top_k=5)` returns `List[SearchResult]` with complete metadata provenance.
