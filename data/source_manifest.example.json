@@ -1,0 +1,11 @@
+{
+  "documents": {
+    "replace-with-a-local-filename.md": {
+      "source_url": "https://official-project.example/docs/page",
+      "publisher": "Official project documentation",
+      "section_urls": {
+        "Installation": "https://official-project.example/docs/page#installation"
+      }
+    }
+  }
+}

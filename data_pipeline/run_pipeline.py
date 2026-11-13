@@ -25,7 +25,7 @@ from typing import List
 
 from .ingestion import load_documents
 from .chunker import chunk_document
-from .experiment import benchmark
+from .experiment import benchmark, save_experiment
 from .models import Chunk
 
 
@@ -43,6 +43,12 @@ def main() -> None:
         type=int,
         default=512,
         help="Maximum tokens per chunk (default: 512)",
+    )
+    parser.add_argument(
+        "--experiment-output",
+        type=pathlib.Path,
+        default=pathlib.Path(__file__).resolve().parents[1] / "data" / "processed" / "chunking_experiment.json",
+        help="Path for saved chunking experiment results.",
     )
     parser.add_argument(
         "--overlap",
@@ -66,7 +72,9 @@ def main() -> None:
     # Step 2: optional benchmark
     if not args.no_benchmark:
         print("Running chunking benchmark…")
-        benchmark(docs, token_limits=[args.token_limit], overlap_ratios=[args.overlap])
+        records = benchmark(docs, token_limits=[256, 512, 1024], overlap_ratios=[0.0, 0.1, 0.2])
+        save_experiment(records, args.experiment_output)
+        print(f"Wrote chunking experiment results to {args.experiment_output}")
 
     # Step 3: chunk the documents
     all_chunks: List[Chunk] = []
