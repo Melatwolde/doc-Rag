@@ -1,96 +1,83 @@
-"""docurag/reranking/cross_encoder.py
-
-Cross-Encoder Reranker interface for refining top-k retrieved chunks.
-Directly consumes SearchResult objects emitted by HybridRetriever.
-"""
-
-from __future__ import annotations
-
-from typing import List, Optional, Union
+from dataclasses import dataclass
+from typing import Any
 
 from sentence_transformers import CrossEncoder
 
-from ..retrieval.result import SearchResult
+
+@dataclass
+class RerankedPassage:
+    passage: Any
+    text: str
+    score: float
+    source_id: str
 
 
 class CrossEncoderReranker:
-    """Reranker using a Cross-Encoder to compute query-chunk cross-attention scores.
-
-    Parameters
-    ----------
-    model_name : str
-        Cross-encoder model name (default: "cross-encoder/ms-marco-MiniLM-L-6-v2").
-    device : Optional[str]
-        Device to run inference on.
-    """
+    """Score retrieved passages against a query and return the top results."""
 
     def __init__(
         self,
         model_name: str = "cross-encoder/ms-marco-MiniLM-L-6-v2",
-        device: Optional[str] = None,
+        top_k: int = 5,
     ) -> None:
-        self.model_name = model_name
-        self.device = device
-        self._model: Optional[CrossEncoder] = None
+        if top_k < 1:
+            raise ValueError("top_k must be at least 1")
+        self.model = CrossEncoder(model_name)
+        self.top_k = top_k
 
-    @property
-    def model(self) -> CrossEncoder:
-        if self._model is None:
-            self._model = CrossEncoder(self.model_name, device=self.device)
-        return self._model
+    @staticmethod
+    def _get_text(passage: Any) -> str:
+        if isinstance(passage, dict):
+            value = (
+                passage.get("text")
+                or passage.get("content")
+                or passage.get("page_content")
+                or ""
+            )
+        else:
+            value = (
+                getattr(passage, "text", None)
+                or getattr(passage, "content", None)
+                or getattr(passage, "page_content", None)
+                or ""
+            )
+        return str(value)
 
-    def rerank(
-        self,
-        query: str,
-        candidates: List[SearchResult],
-        top_k: int = 3,
-    ) -> List[SearchResult]:
-        """Rerank a list of SearchResult candidates for a query.
+    @staticmethod
+    def _get_source_id(passage: Any, fallback: int) -> str:
+        if isinstance(passage, dict):
+            value = passage.get("id", fallback)
+        else:
+            value = getattr(passage, "id", fallback)
+        return str(value if value is not None else fallback)
 
-        Parameters
-        ----------
-        query : str
-            Search query string.
-        candidates : List[SearchResult]
-            Candidates produced by HybridRetriever.retrieve().
-        top_k : int
-            Number of top reranked chunks to return.
-
-        Returns
-        -------
-        List[SearchResult]
-            Reranked results with cross-encoder relevance scores.
-        """
-        if not candidates:
+    def rerank(self, query: str, passages: list[Any]) -> list[RerankedPassage]:
+        """Return the highest-scoring passages, preserving original passage data."""
+        if not query.strip() or not passages:
             return []
 
-        # Build query-chunk text pairs for cross-attention
-        pairs = [[query, c.content] for c in candidates]
+        valid_items = []
+        pairs = []
+
+        for passage in passages:
+            passage_text = self._get_text(passage)
+            if passage_text.strip():
+                valid_items.append(passage)
+                pairs.append((query, passage_text))
+
+        if not pairs:
+            return []
+
         scores = self.model.predict(pairs)
 
-        # Sort indices by cross-encoder score descending
-        ranked_indices = sorted(
-            range(len(candidates)),
-            key=lambda idx: float(scores[idx]),
-            reverse=True,
-        )
-
-        reranked: List[SearchResult] = []
-        for new_rank, idx in enumerate(ranked_indices[:top_k], 1):
-            original = candidates[idx]
-            metadata = original.metadata.copy()
-            metadata["cross_encoder_score"] = float(scores[idx])
-            metadata["reranked_rank"] = new_rank
-            metadata["pre_rerank_rank"] = idx + 1
-            metadata["pre_rerank_score"] = original.score
-
-            reranked.append(
-                SearchResult(
-                    chunk_id=original.chunk_id,
-                    content=original.content,
-                    score=float(scores[idx]),
-                    metadata=metadata,
-                )
+        ranked = [
+            RerankedPassage(
+                passage=passage,
+                text=self._get_text(passage),
+                score=float(score),
+                source_id=self._get_source_id(passage, index),
             )
-
-        return reranked
+            for index, (passage, score) in enumerate(zip(valid_items, scores))
+        ]
+        ranked.sort(key=lambda item: item.score, reverse=True)
+        return ranked[: self.top_k]
